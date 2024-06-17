@@ -3,20 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WebApplication1.Data;
+using MyRecipes.Data;
 
 #nullable disable
 
-namespace WebApplication1.Data.Migrations
+namespace MyRecipes.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240616154642_initial")]
-    partial class initial
+    [DbContext(typeof(AppDbContext))]
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -227,6 +224,169 @@ namespace WebApplication1.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("MyRecipes.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.Dish", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DishDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DishName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Servings")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Dishes");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.DishCategory", b =>
+                {
+                    b.Property<int>("DishId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.HasKey("DishId", "CategoryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("DishCategories");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.Ingredient", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("IngredientName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Ingredients");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.Instruction", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DishId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("InstructionBody")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("InstructionNumber")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Instructions");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.Recipe", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DishId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RecipeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Recipes");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.RecipeIngredient", b =>
+                {
+                    b.Property<int>("RecipeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IngredientId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IngredientNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RecipeId", "IngredientId");
+
+                    b.HasIndex("Id");
+
+                    b.HasIndex("IngredientId");
+
+                    b.ToTable("RecipeIngredients");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.Unit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("UnitName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Units");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -276,6 +436,103 @@ namespace WebApplication1.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.DishCategory", b =>
+                {
+                    b.HasOne("MyRecipes.Models.Category", "Category")
+                        .WithMany("DishCategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyRecipes.Models.Dish", "Dish")
+                        .WithMany("DishCategories")
+                        .HasForeignKey("DishId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Dish");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.Instruction", b =>
+                {
+                    b.HasOne("MyRecipes.Models.Dish", "Dish")
+                        .WithMany("Instructions")
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dish");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.Recipe", b =>
+                {
+                    b.HasOne("MyRecipes.Models.Dish", "Dish")
+                        .WithMany("Recipes")
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dish");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.RecipeIngredient", b =>
+                {
+                    b.HasOne("MyRecipes.Models.Unit", "Unit")
+                        .WithMany("RecipeIngredients")
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyRecipes.Models.Ingredient", "Ingredient")
+                        .WithMany("RecipeIngredients")
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyRecipes.Models.Recipe", "Recipe")
+                        .WithMany("RecipeIngredients")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ingredient");
+
+                    b.Navigation("Recipe");
+
+                    b.Navigation("Unit");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.Category", b =>
+                {
+                    b.Navigation("DishCategories");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.Dish", b =>
+                {
+                    b.Navigation("DishCategories");
+
+                    b.Navigation("Instructions");
+
+                    b.Navigation("Recipes");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.Ingredient", b =>
+                {
+                    b.Navigation("RecipeIngredients");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.Recipe", b =>
+                {
+                    b.Navigation("RecipeIngredients");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.Unit", b =>
+                {
+                    b.Navigation("RecipeIngredients");
                 });
 #pragma warning restore 612, 618
         }
