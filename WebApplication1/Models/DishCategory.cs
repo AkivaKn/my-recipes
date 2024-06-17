@@ -5,10 +5,10 @@ namespace MyRecipes.Models
     public class DishCategory
     {
         public int DishId { get; set; }
-        [ForeignKey("Id")]
+        [ForeignKey("DishId")]
         public Dish Dish { get; set; }
         public int CategoryId { get; set; }
-        [ForeignKey("Id")]
+        [ForeignKey("CategoryId")]
         public Category Category { get; set; }
 
     }

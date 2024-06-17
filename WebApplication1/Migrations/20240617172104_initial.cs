@@ -70,9 +70,9 @@ namespace MyRecipes.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DishName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DishDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Servings = table.Column<int>(type: "int", nullable: false),
-                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    DishDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Servings = table.Column<int>(type: "int", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -216,8 +216,7 @@ namespace MyRecipes.Migrations
                 columns: table => new
                 {
                     DishId = table.Column<int>(type: "int", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    CategoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -240,7 +239,8 @@ namespace MyRecipes.Migrations
                 name: "Instructions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     InstructionNumber = table.Column<int>(type: "int", nullable: false),
                     InstructionBody = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DishId = table.Column<int>(type: "int", nullable: false)
@@ -249,8 +249,8 @@ namespace MyRecipes.Migrations
                 {
                     table.PrimaryKey("PK_Instructions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Instructions_Dishes_Id",
-                        column: x => x.Id,
+                        name: "FK_Instructions_Dishes_DishId",
+                        column: x => x.DishId,
                         principalTable: "Dishes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -260,7 +260,8 @@ namespace MyRecipes.Migrations
                 name: "Recipes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     RecipeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DishId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -268,8 +269,8 @@ namespace MyRecipes.Migrations
                 {
                     table.PrimaryKey("PK_Recipes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Recipes_Dishes_Id",
-                        column: x => x.Id,
+                        name: "FK_Recipes_Dishes_DishId",
+                        column: x => x.DishId,
                         principalTable: "Dishes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -281,10 +282,8 @@ namespace MyRecipes.Migrations
                 {
                     RecipeId = table.Column<int>(type: "int", nullable: false),
                     IngredientId = table.Column<int>(type: "int", nullable: false),
-                    UnitId = table.Column<int>(type: "int", nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    IngredientNumber = table.Column<int>(type: "int", nullable: false)
+                    UnitId = table.Column<int>(type: "int", nullable: true),
+                    Quantity = table.Column<double>(type: "float", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -302,11 +301,10 @@ namespace MyRecipes.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RecipeIngredients_Units_Id",
-                        column: x => x.Id,
+                        name: "FK_RecipeIngredients_Units_UnitId",
+                        column: x => x.UnitId,
                         principalTable: "Units",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -354,14 +352,24 @@ namespace MyRecipes.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RecipeIngredients_Id",
-                table: "RecipeIngredients",
-                column: "Id");
+                name: "IX_Instructions_DishId",
+                table: "Instructions",
+                column: "DishId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RecipeIngredients_IngredientId",
                 table: "RecipeIngredients",
                 column: "IngredientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RecipeIngredients_UnitId",
+                table: "RecipeIngredients",
+                column: "UnitId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Recipes_DishId",
+                table: "Recipes",
+                column: "DishId");
         }
 
         /// <inheritdoc />

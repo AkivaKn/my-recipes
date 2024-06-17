@@ -12,7 +12,7 @@ using MyRecipes.Data;
 namespace MyRecipes.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240617135003_initial")]
+    [Migration("20240617172104_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -253,7 +253,6 @@ namespace MyRecipes.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("DishDescription")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DishName")
@@ -261,10 +260,9 @@ namespace MyRecipes.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Notes")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Servings")
+                    b.Property<int?>("Servings")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -278,9 +276,6 @@ namespace MyRecipes.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Id")
                         .HasColumnType("int");
 
                     b.HasKey("DishId", "CategoryId");
@@ -310,7 +305,10 @@ namespace MyRecipes.Migrations
             modelBuilder.Entity("MyRecipes.Models.Instruction", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("DishId")
                         .HasColumnType("int");
@@ -324,13 +322,18 @@ namespace MyRecipes.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DishId");
+
                     b.ToTable("Instructions");
                 });
 
             modelBuilder.Entity("MyRecipes.Models.Recipe", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("DishId")
                         .HasColumnType("int");
@@ -340,6 +343,8 @@ namespace MyRecipes.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DishId");
 
                     b.ToTable("Recipes");
                 });
@@ -352,23 +357,17 @@ namespace MyRecipes.Migrations
                     b.Property<int>("IngredientId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
+                    b.Property<double?>("Quantity")
+                        .HasColumnType("float");
 
-                    b.Property<int>("IngredientNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UnitId")
+                    b.Property<int?>("UnitId")
                         .HasColumnType("int");
 
                     b.HasKey("RecipeId", "IngredientId");
 
-                    b.HasIndex("Id");
-
                     b.HasIndex("IngredientId");
+
+                    b.HasIndex("UnitId");
 
                     b.ToTable("RecipeIngredients");
                 });
@@ -464,7 +463,7 @@ namespace MyRecipes.Migrations
                 {
                     b.HasOne("MyRecipes.Models.Dish", "Dish")
                         .WithMany("Instructions")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("DishId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -475,7 +474,7 @@ namespace MyRecipes.Migrations
                 {
                     b.HasOne("MyRecipes.Models.Dish", "Dish")
                         .WithMany("Recipes")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("DishId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -484,12 +483,6 @@ namespace MyRecipes.Migrations
 
             modelBuilder.Entity("MyRecipes.Models.RecipeIngredient", b =>
                 {
-                    b.HasOne("MyRecipes.Models.Unit", "Unit")
-                        .WithMany("RecipeIngredients")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MyRecipes.Models.Ingredient", "Ingredient")
                         .WithMany("RecipeIngredients")
                         .HasForeignKey("IngredientId")
@@ -501,6 +494,10 @@ namespace MyRecipes.Migrations
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("MyRecipes.Models.Unit", "Unit")
+                        .WithMany("RecipeIngredients")
+                        .HasForeignKey("UnitId");
 
                     b.Navigation("Ingredient");
 
