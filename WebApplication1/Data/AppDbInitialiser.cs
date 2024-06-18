@@ -26,6 +26,7 @@ namespace MyRecipes.Data
                        });
                     context.SaveChanges();
                 }
+                Console.WriteLine($"Dishes count after seeding: {context.Dishes.Count()}");
                 if (!context.Categories.Any())
                 {
                     context.Categories.AddRange(new List<Category>()

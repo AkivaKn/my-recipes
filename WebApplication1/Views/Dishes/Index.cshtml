@@ -1,0 +1,25 @@
+﻿@model IEnumerable<MyRecipes.Models.Dish>
+@{
+    ViewData["Title"] = "Recipes";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4">Recipes</h1>
+    <div class="list-group">
+        @foreach (var dish in Model)
+        {
+            <div class="list-group-item">
+                <h5 class="mb-2">@dish.DishName</h5>
+                <p class="mb-2">@dish.DishDescription</p>
+                <p>
+                    <small class="text-muted">Categories:</small>
+                    @foreach (var dishCategory in dish.DishCategories)
+                    {
+                        <span class="badge badge-primary text-black">@dishCategory.Category.CategoryName</span>
+                    }
+                </p>
+            </div>
+            <hr class="my-4" style="border-color: #ddd;">
+        }
+    </div>
+</div>
