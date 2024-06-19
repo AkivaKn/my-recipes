@@ -80,25 +80,13 @@ namespace MyRecipes.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Ingredients",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IngredientName = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Ingredients", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Units",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UnitName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    UnitName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PluralName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -277,31 +265,27 @@ namespace MyRecipes.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RecipeIngredients",
+                name: "Ingredients",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IngredientName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RecipeId = table.Column<int>(type: "int", nullable: false),
-                    IngredientId = table.Column<int>(type: "int", nullable: false),
                     UnitId = table.Column<int>(type: "int", nullable: true),
                     Quantity = table.Column<double>(type: "float", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RecipeIngredients", x => new { x.RecipeId, x.IngredientId });
+                    table.PrimaryKey("PK_Ingredients", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RecipeIngredients_Ingredients_IngredientId",
-                        column: x => x.IngredientId,
-                        principalTable: "Ingredients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RecipeIngredients_Recipes_RecipeId",
+                        name: "FK_Ingredients_Recipes_RecipeId",
                         column: x => x.RecipeId,
                         principalTable: "Recipes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RecipeIngredients_Units_UnitId",
+                        name: "FK_Ingredients_Units_UnitId",
                         column: x => x.UnitId,
                         principalTable: "Units",
                         principalColumn: "Id");
@@ -352,19 +336,19 @@ namespace MyRecipes.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Ingredients_RecipeId",
+                table: "Ingredients",
+                column: "RecipeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Ingredients_UnitId",
+                table: "Ingredients",
+                column: "UnitId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Instructions_DishId",
                 table: "Instructions",
                 column: "DishId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RecipeIngredients_IngredientId",
-                table: "RecipeIngredients",
-                column: "IngredientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RecipeIngredients_UnitId",
-                table: "RecipeIngredients",
-                column: "UnitId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Recipes_DishId",
@@ -394,10 +378,10 @@ namespace MyRecipes.Migrations
                 name: "DishCategories");
 
             migrationBuilder.DropTable(
-                name: "Instructions");
+                name: "Ingredients");
 
             migrationBuilder.DropTable(
-                name: "RecipeIngredients");
+                name: "Instructions");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -407,9 +391,6 @@ namespace MyRecipes.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories");
-
-            migrationBuilder.DropTable(
-                name: "Ingredients");
 
             migrationBuilder.DropTable(
                 name: "Recipes");

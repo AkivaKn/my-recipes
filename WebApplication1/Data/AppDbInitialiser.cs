@@ -7,7 +7,7 @@ namespace MyRecipes.Data
         public static void Seed(IApplicationBuilder applicationBuilder)
         {
             using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
-            { 
+            {
                 var context = serviceScope.ServiceProvider.GetService<AppDbContext>();
                 context.Database.EnsureCreated();
                 if (!context.Dishes.Any())
@@ -15,7 +15,7 @@ namespace MyRecipes.Data
                     context.Dishes.AddRange(new List<Dish>()
                     { new Dish()
                         {
-                            DishName ="Baked Bkintz Casserole",
+                            DishName ="Baked Blintz Casserole",
                         },
                         new Dish()
                         {
@@ -198,31 +198,58 @@ namespace MyRecipes.Data
                     {
                         new Unit()
                         {
-                            UnitName = "cups",
+                            UnitName = "cup",
+                            PluralName = "cups"
                         },
                         new Unit()
                         {
                             UnitName = "Tbsp",
+                            PluralName = "Tbsp"
                         },
                         new Unit()
                         {
                             UnitName = "tsp",
+                            PluralName = "tsp"
                         },
                         new Unit()
                         {
                             UnitName = "gr",
+                            PluralName = "gr"
                         },
                         new Unit()
                         {
-                            UnitName = "sticks",
+                            UnitName = "stick",
+                            PluralName = "sticks"
                         },
                         new Unit()
                         {
                             UnitName = "oz",
+                            PluralName = "oz"
                         },
                         new Unit()
                         {
-                            UnitName = "sheets",
+                            UnitName = "sheet",
+                            PluralName = "sheets"
+                        },
+                         new Unit()
+                        {
+                            UnitName = "kg",
+                            PluralName = "kg"
+                        },
+                          new Unit()
+                        {
+                            UnitName = "ml",
+                            PluralName = "ml"
+                        },
+                           new Unit()
+                        {
+                            UnitName = "l",
+                            PluralName = "l"
+                        },
+                            new Unit()
+                        {
+                            UnitName = "pinch",
+                            PluralName = "pinch"
                         },
                     });
                     context.SaveChanges();
@@ -234,345 +261,240 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "large egg",
+                            RecipeId = 1,
+                            Quantity = 4
                         },
                         new Ingredient()
                         {
                             IngredientName = "milk",
+                             RecipeId = 1,
+                            UnitId = 1,
+                            Quantity = 1.25,
                         },
                         new Ingredient()
                         {
                             IngredientName = "sour cream",
+                            RecipeId = 1,
+                            UnitId = 2,
+                            Quantity = 2,
                         },
                         new Ingredient()
                         {
                             IngredientName = "melted butter",
+                            RecipeId = 1,
+                            UnitId = 1,
+                            Quantity = 0.25,
                         },
                         new Ingredient()
                         {
                             IngredientName = "vanilla extract",
+                            RecipeId = 1,
+                            UnitId = 3,
+                            Quantity = 0.75,
                         },
                         new Ingredient()
                         {
                             IngredientName = "flour",
+                            RecipeId = 1,
+                            UnitId = 1,
+                            Quantity = 1.33,
                         },
                         new Ingredient()
                         {
                             IngredientName = "sugar",
+                            RecipeId = 1,
+                            UnitId = 2,
+                            Quantity = 1.5,
                         },
                         new Ingredient()
                         {
                             IngredientName = "baking powder",
+                            RecipeId = 1,
+                            UnitId = 3,
+                            Quantity = 1.25,
                         },
                         new Ingredient()
                         {
                             IngredientName = "curd style farmer cheese",
+                            RecipeId = 2,
+                            UnitId = 4,
+                            Quantity = 225,
                         },
                         new Ingredient()
                         {
                             IngredientName = "ricotta cheese",
+                            RecipeId = 2,
+                            UnitId = 4,
+                            Quantity = 450,
+                        },
+                        new Ingredient()
+                        {
+                            IngredientName = "large egg",
+                             RecipeId = 2,
+                            Quantity = 2,
+                        },
+                         new Ingredient()
+                        {
+                            IngredientName = "sugar",
+                            RecipeId = 2,
+                            UnitId = 2,
+                            Quantity = 2.5,
                         },
                         new Ingredient()
                         {
                             IngredientName = "lemon juice",
+                            RecipeId = 2,
+                            UnitId = 2,
+                            Quantity = 2,
+                        },
+                         new Ingredient()
+                        {
+                            IngredientName = "sour cream",
+                            RecipeId = 3,
                         },
                         new Ingredient()
                         {
                             IngredientName = "plain/vanilla yoghurt",
+                            RecipeId = 3,
                         },
                         new Ingredient()
                         {
                             IngredientName = "applesauce",
+                            RecipeId = 3,
                         },
                         new Ingredient()
                         {
                             IngredientName = "sliced fresh strawberries or other fruit",
+                            RecipeId = 3,
+                        },
+                        new Ingredient()
+                        {
+                            IngredientName = "flour",
+                            RecipeId = 4,
+                            UnitId = 1,
+                            Quantity = 3,
+                        },
+                        new Ingredient()
+                        {
+                            IngredientName = "baking powder",
+                            RecipeId = 4,
+                            UnitId = 3,
+                            Quantity = 1,
                         },
                         new Ingredient()
                         {
                             IngredientName = "margarine",
+                            RecipeId = 4,
+                            UnitId = 5,
+                            Quantity = 3,
                         },
                         new Ingredient()
                         {
                             IngredientName = "egg yolks",
+                             RecipeId = 4,
+                            Quantity = 2,
                         },
                         new Ingredient()
                         {
                             IngredientName = "water",
+                            RecipeId = 4,
+                            UnitId = 1,
+                            Quantity = 0.33,
+                        },
+                        new Ingredient()
+                        {
+                            IngredientName = "sugar",
+                             RecipeId = 4,
+                            UnitId = 2,
+                            Quantity = 2,
                         },
                         new Ingredient()
                         {
                             IngredientName = "salt",
+                             RecipeId = 4,
+                            UnitId = 3,
+                            Quantity = 0.5,
                         },
                         new Ingredient()
                         {
                             IngredientName = "chocolate",
+                              RecipeId = 5,
+                            UnitId = 6,
+                            Quantity = 8,
+                        },
+                        new Ingredient()
+                        {
+                            IngredientName = "sugar",
+                             RecipeId = 5,
+                            UnitId = 1,
+                            Quantity = 2,
                         },
                         new Ingredient()
                         {
                             IngredientName = "cocoa",
+                             RecipeId = 5,
+                            UnitId = 2,
+                            Quantity = 2,
+                        },
+                         new Ingredient()
+                        {
+                            IngredientName = "water",
+                           RecipeId = 5,
+                            UnitId = 1,
+                            Quantity = 0.5,
+                        },
+                          new Ingredient()
+                        {
+                            IngredientName = "margarine",
+                             RecipeId = 5,
+                            UnitId = 5,
+                            Quantity = 1,
                         },
                         new Ingredient()
                         {
                             IngredientName = "separated egg",
+                              RecipeId = 5,
+                            Quantity = 7,
+                        },
+                         new Ingredient()
+                        {
+                            IngredientName = "egg yolks",
+                               RecipeId = 5,
+                            Quantity = 5,
+                        },
+                          new Ingredient()
+                        {
+                            IngredientName = "flour",
+                             RecipeId = 5,
+                            UnitId = 2,
+                            Quantity = 5,
+                        },
+                        new Ingredient()
+                        {
+                            IngredientName = "baking powder",
+                             RecipeId = 5,
+                            UnitId = 3,
+                            Quantity = 1.5,
                         },
                         new Ingredient()
                         {
                             IngredientName = "bakers choice custard",
+                             RecipeId = 5,
+                            UnitId = 6,
+                            Quantity = 12,
                         },
                         new Ingredient()
                         {
                             IngredientName = "flaky dough",
+                             RecipeId = 5,
+                            UnitId = 7,
+                            Quantity = 2,
                         },
                         new Ingredient()
                         {
                             IngredientName = "confectioner's sugar",
+                             RecipeId = 5,
                         }
-
-                    });
-                    context.SaveChanges();
-                }
-                if (!context.RecipeIngredients.Any())
-                {
-                    context.RecipeIngredients.AddRange(new List<RecipeIngredient>()
-                    {
-                        new RecipeIngredient()
-                        {
-                            RecipeId = 1,
-                            IngredientId = 1,
-                            Quantity = 4,
-                        },
-                         new RecipeIngredient()
-                        {
-                            RecipeId = 1,
-                            IngredientId = 2,
-                            UnitId = 1,
-                            Quantity = 1.25,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 1,
-                            IngredientId = 3,
-                            UnitId = 2,
-                            Quantity = 2,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 1,
-                            IngredientId = 4,
-                            UnitId = 1,
-                            Quantity = 0.25,
-                        },
-                         new RecipeIngredient()
-                        {
-                            RecipeId = 1,
-                            IngredientId = 5,
-                            UnitId = 3,
-                            Quantity = 0.75,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 1,
-                            IngredientId = 6,
-                            UnitId = 1,
-                            Quantity = 1.33,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 1,
-                            IngredientId = 7,
-                            UnitId = 2,
-                            Quantity = 1.5,
-                        },
-                           new RecipeIngredient()
-                        {
-                            RecipeId = 1,
-                            IngredientId = 8,
-                            UnitId = 3,
-                            Quantity = 1.25,
-                        },
-                         new RecipeIngredient()
-                        {
-                            RecipeId = 2,
-                            IngredientId = 9,
-                            UnitId = 4,
-                            Quantity = 225,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 2,
-                            IngredientId = 10,
-                            UnitId = 4,
-                            Quantity = 450,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 2,
-                            IngredientId = 1,
-                            Quantity = 2,
-                        },
-                         new RecipeIngredient()
-                        {
-                            RecipeId = 2,
-                            IngredientId = 7,
-                            UnitId = 2,
-                            Quantity = 2.5,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 2,
-                            IngredientId = 11,
-                            UnitId = 2,
-                            Quantity = 2,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 3,
-                            IngredientId = 3,
-                        },
-                         new RecipeIngredient()
-                        {
-                            RecipeId = 3,
-                            IngredientId = 12,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 3,
-                            IngredientId = 13,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 3,
-                            IngredientId = 14,
-                        },
-                         new RecipeIngredient()
-                        {
-                            RecipeId = 4,
-                            IngredientId = 6,
-                            UnitId = 1,
-                            Quantity = 3,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 4,
-                            IngredientId = 8,
-                            UnitId = 3,
-                            Quantity = 1,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 4,
-                            IngredientId = 15,
-                            UnitId = 5,
-                            Quantity = 3,
-                        },
-                         new RecipeIngredient()
-                        {
-                            RecipeId = 4,
-                            IngredientId = 16,
-                            Quantity = 2,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 4,
-                            IngredientId = 17,
-                            UnitId = 1,
-                            Quantity = 0.33,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 4,
-                            IngredientId = 7,
-                            UnitId = 2,
-                            Quantity = 2,
-                        },
-                         new RecipeIngredient()
-                        {
-                            RecipeId = 4,
-                            IngredientId = 18,
-                            UnitId = 3,
-                            Quantity = 0.5,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 5,
-                            IngredientId = 19,
-                            UnitId = 6,
-                            Quantity = 8,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 5,
-                            IngredientId = 7,
-                            UnitId = 1,
-                            Quantity = 2,
-                        },
-                         new RecipeIngredient()
-                        {
-                            RecipeId = 5,
-                            IngredientId = 20,
-                            UnitId = 2,
-                            Quantity = 2,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 5,
-                            IngredientId = 17,
-                            UnitId = 1,
-                            Quantity = 0.5,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 5,
-                            IngredientId = 15,
-                            UnitId = 5,
-                            Quantity = 1,
-                        },
-                         new RecipeIngredient()
-                        {
-                            RecipeId = 5,
-                            IngredientId = 21,
-                            Quantity = 7,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 5,
-                            IngredientId = 16,
-                            Quantity = 5,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 5,
-                            IngredientId = 6,
-                            UnitId = 2,
-                            Quantity = 5,
-                        },
-                         new RecipeIngredient()
-                        {
-                            RecipeId = 5,
-                            IngredientId = 8,
-                            UnitId = 3,
-                            Quantity = 1.5,
-                        },
-                          new RecipeIngredient()
-                        {
-                            RecipeId = 5,
-                            IngredientId = 22,
-                            UnitId = 6,
-                            Quantity = 12,
-                        },
-                           new RecipeIngredient()
-                        {
-                            RecipeId = 5,
-                            IngredientId = 23,
-                            UnitId = 7,
-                            Quantity = 2,
-                        },
-                            new RecipeIngredient()
-                        {
-                            RecipeId = 5,
-                            IngredientId = 24,
-                        },
-
 
                     });
                     context.SaveChanges();

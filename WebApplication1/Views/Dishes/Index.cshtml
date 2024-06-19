@@ -9,7 +9,7 @@
         @foreach (var dish in Model)
         {
             <div class="list-group-item">
-                <h5 class="mb-2">@dish.DishName</h5>
+                <a asp-action="Details" asp-route-id="@dish.Id"><h5 class="mb-2">@dish.DishName</h5></a>
                 <p class="mb-2">@dish.DishDescription</p>
                 <p>
                     <small class="text-muted">Categories:</small>

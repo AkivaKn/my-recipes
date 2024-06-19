@@ -7,10 +7,11 @@ namespace MyRecipes.Models
     {
         [Key]
         public int Id { get; set; }
+        [Display(Name = "Section Name")]
         public string RecipeName { get; set; }
         public int DishId { get; set; }
         [ForeignKey("DishId")]
         public Dish Dish { get; set; }
-        public List<RecipeIngredient> RecipeIngredients { get; set; }
+        public List<Ingredient> Ingredients { get; set; }
     }
 }

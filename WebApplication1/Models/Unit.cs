@@ -7,7 +7,8 @@ namespace MyRecipes.Models
         [Key]
         public int Id { get; set; }
         public string UnitName { get; set; }
-        public List<RecipeIngredient> RecipeIngredients { get; set; }
+        public string PluralName { get; set; }
+        public List<Ingredient> Ingredients { get; set; }
 
     }
 }

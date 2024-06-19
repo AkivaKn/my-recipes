@@ -12,13 +12,13 @@ namespace MyRecipes.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<RecipeIngredient>().HasKey(ri => new
-            {
-                ri.RecipeId,
-                ri.IngredientId,
-            });
-            modelBuilder.Entity<RecipeIngredient>().HasOne(r => r.Recipe).WithMany(ri => ri.RecipeIngredients).HasForeignKey(r => r.RecipeId);
-            modelBuilder.Entity<RecipeIngredient>().HasOne(i => i.Ingredient).WithMany(ri => ri.RecipeIngredients).HasForeignKey(i => i.IngredientId);
+            //modelBuilder.Entity<RecipeIngredient>().HasKey(ri => new
+            //{
+            //    ri.RecipeId,
+            //    ri.IngredientId,
+            //});
+            //modelBuilder.Entity<RecipeIngredient>().HasOne(r => r.Recipe).WithMany(ri => ri.RecipeIngredients).HasForeignKey(r => r.RecipeId);
+            //modelBuilder.Entity<RecipeIngredient>().HasOne(i => i.Ingredient).WithMany(ri => ri.RecipeIngredients).HasForeignKey(i => i.IngredientId);
             modelBuilder.Entity<DishCategory>().HasKey(dc => new
             {
                 dc.DishId,
@@ -34,7 +34,7 @@ namespace MyRecipes.Data
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<Instruction> Instructions { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
-        public DbSet<RecipeIngredient> RecipeIngredients { get; set; }
+        //public DbSet<RecipeIngredient> RecipeIngredients { get; set; }
         public DbSet<Unit> Units { get; set; }
 
 

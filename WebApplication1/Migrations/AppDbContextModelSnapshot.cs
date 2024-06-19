@@ -294,7 +294,20 @@ namespace MyRecipes.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double?>("Quantity")
+                        .HasColumnType("float");
+
+                    b.Property<int>("RecipeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UnitId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
+
+                    b.HasIndex("UnitId");
 
                     b.ToTable("Ingredients");
                 });
@@ -346,29 +359,6 @@ namespace MyRecipes.Migrations
                     b.ToTable("Recipes");
                 });
 
-            modelBuilder.Entity("MyRecipes.Models.RecipeIngredient", b =>
-                {
-                    b.Property<int>("RecipeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IngredientId")
-                        .HasColumnType("int");
-
-                    b.Property<double?>("Quantity")
-                        .HasColumnType("float");
-
-                    b.Property<int?>("UnitId")
-                        .HasColumnType("int");
-
-                    b.HasKey("RecipeId", "IngredientId");
-
-                    b.HasIndex("IngredientId");
-
-                    b.HasIndex("UnitId");
-
-                    b.ToTable("RecipeIngredients");
-                });
-
             modelBuilder.Entity("MyRecipes.Models.Unit", b =>
                 {
                     b.Property<int>("Id")
@@ -376,6 +366,10 @@ namespace MyRecipes.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("PluralName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UnitName")
                         .IsRequired()
@@ -456,6 +450,23 @@ namespace MyRecipes.Migrations
                     b.Navigation("Dish");
                 });
 
+            modelBuilder.Entity("MyRecipes.Models.Ingredient", b =>
+                {
+                    b.HasOne("MyRecipes.Models.Recipe", "Recipe")
+                        .WithMany("Ingredients")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyRecipes.Models.Unit", "Unit")
+                        .WithMany("Ingredients")
+                        .HasForeignKey("UnitId");
+
+                    b.Navigation("Recipe");
+
+                    b.Navigation("Unit");
+                });
+
             modelBuilder.Entity("MyRecipes.Models.Instruction", b =>
                 {
                     b.HasOne("MyRecipes.Models.Dish", "Dish")
@@ -478,31 +489,6 @@ namespace MyRecipes.Migrations
                     b.Navigation("Dish");
                 });
 
-            modelBuilder.Entity("MyRecipes.Models.RecipeIngredient", b =>
-                {
-                    b.HasOne("MyRecipes.Models.Ingredient", "Ingredient")
-                        .WithMany("RecipeIngredients")
-                        .HasForeignKey("IngredientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MyRecipes.Models.Recipe", "Recipe")
-                        .WithMany("RecipeIngredients")
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MyRecipes.Models.Unit", "Unit")
-                        .WithMany("RecipeIngredients")
-                        .HasForeignKey("UnitId");
-
-                    b.Navigation("Ingredient");
-
-                    b.Navigation("Recipe");
-
-                    b.Navigation("Unit");
-                });
-
             modelBuilder.Entity("MyRecipes.Models.Category", b =>
                 {
                     b.Navigation("DishCategories");
@@ -517,19 +503,14 @@ namespace MyRecipes.Migrations
                     b.Navigation("Recipes");
                 });
 
-            modelBuilder.Entity("MyRecipes.Models.Ingredient", b =>
-                {
-                    b.Navigation("RecipeIngredients");
-                });
-
             modelBuilder.Entity("MyRecipes.Models.Recipe", b =>
                 {
-                    b.Navigation("RecipeIngredients");
+                    b.Navigation("Ingredients");
                 });
 
             modelBuilder.Entity("MyRecipes.Models.Unit", b =>
                 {
-                    b.Navigation("RecipeIngredients");
+                    b.Navigation("Ingredients");
                 });
 #pragma warning restore 612, 618
         }

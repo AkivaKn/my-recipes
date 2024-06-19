@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace MyRecipes.Models
@@ -7,12 +8,25 @@ namespace MyRecipes.Models
     {
         [Key]
         public int Id { get; set; }
+        [Display(Name = "Recipe Name")]
+        [Required(ErrorMessage = "Please provide a name")]
         public string DishName { get; set; }
+        [Display(Name = "Description")]
         public string? DishDescription {  get; set; }
+        [Display(Name = "Number of servings")]
+
+        [ValidateNever]
         public int? Servings { get; set; }
+        [Display(Name = "Recipe Notes")]
+
+        [ValidateNever]
         public string? Notes { get; set; }
         public List<DishCategory> DishCategories { get; set; }
+
+        [ValidateNever]
         public List<Instruction> Instructions { get; set; }
+        [ValidateNever]
+
         public List<Recipe> Recipes { get; set; }
 
     }

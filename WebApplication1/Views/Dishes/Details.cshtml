@@ -1,0 +1,77 @@
+﻿@model MyRecipes.Models.Dish
+@{
+    ViewData["Title"] = Model.DishName;
+}
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">@Model.DishName</h2>
+            @if(Model.DishCategories != null){ <p>
+                <small class="text-muted">Categories:</small>
+                @foreach (var dishCategory in Model.DishCategories)
+                {
+                    <span class="badge badge-primary text-black">@dishCategory.Category.CategoryName</span>
+                }
+            </p>}
+            @if(Model.Servings != null)
+            {
+                <p>@Model.Servings Servings</p>
+            }
+            <p class="card-text">@Model.DishDescription</p>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Ingredients:</h5>
+                    @if (Model.Recipes != null && Model.Recipes.Count > 0)
+                    {
+                        foreach (var recipe in Model.Recipes)
+                        {
+                            <h6>@recipe.RecipeName</h6>
+                            @if (recipe.Ingredients != null)
+                            {
+                                <ul>
+                                    @foreach (var ingredient in recipe.Ingredients)
+                                    {
+                                        <li>
+                                            @if (ingredient.Quantity.HasValue)
+                                            {
+                                                @ingredient.Quantity @(" ")
+                                                @if (ingredient.Unit != null)
+                                                {
+                                                    @ingredient.Unit.UnitName @(" ")
+                                                }
+                                            }
+                                            @ingredient.IngredientName
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        }
+                    }
+                </div>
+
+                <div class="col-md-6">
+                    <h5>Instructions:</h5>
+                    @if (Model.Instructions != null)
+                    {
+                        <ol>
+                            @foreach (var instruction in Model.Instructions.OrderBy(i => i.InstructionNumber))
+                            {
+                                <li>@instruction.InstructionBody</li>
+                            }
+                        </ol>
+                    }
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Notes))
+            {
+                <div class="mt-4">
+                    <h5>Notes:</h5>
+                    <p>@Model.Notes</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

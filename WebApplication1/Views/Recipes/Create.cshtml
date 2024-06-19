@@ -1,0 +1,131 @@
+﻿@using MyRecipes.Models
+@model MyRecipes.Models.Recipe
+
+@{
+    ViewData["Title"] = "Create";
+    var dish = ViewData["Dish"] as Dish;
+}
+
+<h1>Create</h1>
+
+<h4>Recipe</h4>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">@dish.DishName</h2>
+           @if(dish.DishCategories != null){ <p>
+                <small class="text-muted">Categories:</small>
+
+                @foreach (var dishCategory in dish.DishCategories)
+                {
+                    <span class="badge badge-primary text-black">@dishCategory.Category.CategoryName</span>
+                }
+            </p>}
+            @if(dish.DishDescription != null)
+           { <p class="card-text">@dish.DishDescription</p>}
+
+            <div class="row">
+                @if (dish.Recipes != null && dish.Recipes.Count > 0)
+                {<div class="col-md-6">
+                    <h5>Ingredients:</h5>
+                    @if (dish.Recipes != null && dish.Recipes.Count > 0)
+                    {
+                        foreach (var recipe in dish.Recipes)
+                        {
+                            <h6>@recipe.RecipeName</h6>
+                            @if (recipe.Ingredients != null)
+                            {
+                                <ul>
+                                    @foreach (var ingredient in recipe.Ingredients)
+                                    {
+                                        <li>
+                                            @if (ingredient.Quantity.HasValue)
+                                            {
+                                                @ingredient.Quantity @(" ")
+                                                @if (ingredient.Unit != null)
+                                                {
+                                                    @ingredient.Unit.UnitName @(" ")
+                                                }
+                                            }
+                                            @ingredient.IngredientName
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        }
+                    }
+                </div>}
+            </div>
+
+            @if (!string.IsNullOrEmpty(dish.Notes))
+            {
+                <div class="mt-4">
+                    <h5>Notes:</h5>
+                    <p>@dish.Notes</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="RecipeName" class="control-label"></label>
+                <input asp-for="RecipeName" class="form-control" />
+                <span asp-validation-for="RecipeName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DishId" class="control-label"></label>
+                <input asp-for="DishId" class ="form-control" value=@dish.Id type="hidden"/>
+            </div>
+            <div class="form-group" id="ingredients-list">
+                <ul id="ingredient-ul"></ul>
+                <input type="text" id="new-ingredient" class="form-control" placeholder="Enter ingredient and press Enter" />
+                <button type="button" id="add-ingredient" class="btn btn-primary">Add Ingredient</button>
+                <input type="hidden" id="ingredients" class="form-control" name="ingredients"/>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script>
+    $(document).ready(function () {
+        $('#add-ingredient').click(function () {
+            var ingredient = $('#new-ingredient').val();
+            if (ingredient.trim() !== '') {
+                $('#ingredient-ul').append('<li>' + ingredient + '</li>');
+                $('#new-ingredient').val('');
+                updateIngredients();
+            }
+        });
+
+        $('#new-ingredient').keypress(function (e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                $('#add-ingredient').click();
+            }
+        });
+
+        function updateIngredients() {
+            var ingredientsArray = [];
+            $('#ingredient-ul li').each(function () {
+                ingredientsArray.push($(this).text());
+            });
+            $('#ingredients').val(JSON.stringify(ingredientsArray));
+        }
+    });
+    </script>
+
+}

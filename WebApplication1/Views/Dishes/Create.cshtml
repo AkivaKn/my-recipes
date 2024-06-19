@@ -1,0 +1,257 @@
+﻿@using MyRecipes.Models
+@{
+    ViewData["Title"] = "New Recipe";
+    var units = ViewBag.Units as List<Unit>;
+    var categories = ViewBag.Categories as List<Category>;
+}
+
+<div class="row text">
+    <div class="col-md-8 offset-2">
+        <h1>Add a New Recipe</h1>
+        <div class="row">
+            <div class="col-md-8 offset-2">
+                <form asp-action="Create" method="post" id="recipeForm">
+                    <div class="form-group">
+                        <label for="DishName">Dish Name</label>
+                        <input type="text" id="DishName" name="DishName" class="form-control" />
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Choose categories
+                        </button>
+                        <ul class="dropdown-menu">
+                            @foreach (var category in categories)
+                            {
+                                
+                            <li>
+                                <div class="form-check">
+                                    <input class="form-check-input category-input" type="checkbox" value=@category.Id id=@category.CategoryName >
+                                    <label class="form-check-label" for=@category.CategoryName>
+                                        @category.CategoryName
+                                    </label>
+                                </div>
+                            </li>
+                            }
+                            
+                        </ul>
+                    </div>
+                    <input type="hidden" id="categories" name="categories" class="form-control" value="[]" />
+
+                    <div class="form-group">
+                        <label for="DishDescription">Dish Description</label>
+                        <textarea id="DishDescription" name="DishDescription" class="form-control"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Servings">Servings</label>
+                        <input type="number" id="Servings" name="Servings" class="form-control" value="1"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Notes">Notes</label>
+                        <textarea id="Notes" name="Notes" class="form-control"></textarea>
+                    </div>
+
+                    <div class="form-group" id="recipe-list">
+                        <label>Recipe Sections:</label>
+                        <ul id="recipe-ul"></ul>
+                        <input type="text" id="new-section-title" name="new-section-title" class="form-control" placeholder="Enter title" />
+                        <div class="form-group" id="ingredients-list">
+                            <ul id="ingredient-ul"></ul>
+                            <input type="text" id="new-ingredient" name="new-ingredient" class="form-control" placeholder="Enter ingredient and press Enter" />
+                            <button type="button" id="add-ingredient" class="btn btn-primary">Add Ingredient</button>
+                            <input type="hidden" id="ingredients" name="ingredients" class="form-control" value="[]" />
+                        </div>
+                        <input type="hidden" id="sections" name="sections" value="[]" />
+                        <button type="button" id="add-section" class="btn btn-primary">Add Section</button>
+                    </div>
+
+                    <div class="form-group" id="instructions-list">
+                        <label>Instructions:</label>
+                        <ul id="instruction-ul"></ul>
+                        <textarea id="new-instruction" name="new-instruction" class="form-control" placeholder="Enter instruction and press Enter"></textarea>
+                        <button type="button" id="add-instruction" class="btn btn-primary">Add Instruction</button>
+                        <input type="hidden" id="instructions" name="instructions" />
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Create Dish</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var units = @Html.Raw(Json.Serialize(ViewBag.Units));
+
+            $('input, textarea').keypress(function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    var $this = $(this);
+                    var index = $('input, textarea').index($this);
+                    $('input, textarea').eq(index + 1).focus();
+                }
+            });
+
+            $('.category-input').change(
+                function () {
+                    let CategoryId = $(this).val();
+                    if ($(this).is(':checked')) {
+                        var newCategory = {
+                            CategoryId
+                        }
+                        updateCategories(newCategory)
+                    }
+                    else 
+                    {
+                        deleteCategory(CategoryId)
+                    }
+                });
+            function updateCategories(newCategory) {
+                let categoriesArray;
+                try {
+                    categoriesArray = JSON.parse($('#categories').val());
+                } catch (e) {
+                    categoriesArray = [];
+                }
+                categoriesArray.push(newCategory);
+                $('#categories').val(JSON.stringify(categoriesArray));
+                console.log("Categories Updated: ", $('#categories').val());
+            }
+            function deleteCategory(categoryId){
+               let categoriesArray;
+                try {
+                    categoriesArray = JSON.parse($('#categories').val());
+                } catch (e) {
+                    categoriesArray = [];
+                }
+                var filteredCategories = categoriesArray.filter((category) => category?.CategoryId !== categoryId)
+                $('#categories').val(JSON.stringify(filteredCategories));
+                console.log("Categories Updated: ", $('#categories').val());
+            }
+
+            $('#add-section').click(function () {
+                var sectionTitle = $('#new-section-title').val() || "Main";
+                var ingredients = $('#ingredients').val();
+                if (sectionTitle.trim() !== '' && ingredients !== '[]') {
+                    var parsedIngredients = JSON.parse(ingredients);
+                    $('#recipe-ul').append(`<li>
+                                                        <h5>${sectionTitle}</h5>
+                                                        <ul>
+                                                            ${parsedIngredients.map(ingredient => `<li>${ingredient.Quantity ? ingredient.Quantity + ' ' : ''}${ingredient.IngredientName}</li>`).join('')}
+                                                        </ul>
+                                                    </li>`);
+                    var newSection = {
+                        RecipeName: sectionTitle,
+                        Ingredients: parsedIngredients
+                    };
+                    $('#new-section-title').val('');
+                    $('#ingredients').val('[]');
+                    $('#ingredient-ul').empty();
+                    updateSections(newSection);
+                }
+            });
+
+            function updateSections(newSection) {
+                var sectionsArray;
+                try {
+                    sectionsArray = JSON.parse($('#sections').val());
+                } catch (e) {
+                    sectionsArray = [];
+                }
+                sectionsArray.push(newSection);
+                $('#sections').val(JSON.stringify(sectionsArray));
+                console.log("Sections Updated: ", $('#sections').val());
+            }
+
+            $('#add-ingredient').click(function () {
+                var ingredientValue = $('#new-ingredient').val();
+                if (ingredientValue.trim() !== '') {
+                    let words = ingredientValue.split(' ');
+                    let Quantity;
+                    let IngredientName;
+                    let UnitId;
+                    let UnitName;
+                    if (!isNaN(words[0])) {
+                        Quantity = parseInt(words.shift());
+                        IngredientName = words.join(' ');
+                    } else {
+                        IngredientName = ingredientValue;
+                    }
+                    words = IngredientName.split(' ');
+
+                    for (var i = 0; i < units.length; i++) {
+                        if (words[0] === units[i].unitName || words[0] === units[i].pluralName) {
+                            UnitId = units[i].id;
+                            UnitName = words[0];
+                            IngredientName = words.slice(1).join(' ');
+                            break;
+                        }
+                    }
+                    var newIngredient = {
+                        Quantity: Quantity || null,
+                        IngredientName: IngredientName || "",
+                        UnitId: UnitId || null,
+                        UnitName: UnitName || "",
+                    };
+                    $('#ingredient-ul').append('<li>' + (newIngredient.Quantity ? newIngredient.Quantity + ' ' : '') + (newIngredient.UnitName ? newIngredient.UnitName + ' ' : '') + newIngredient.IngredientName + '</li>');
+                    $('#new-ingredient').val('');
+                    updateIngredients(newIngredient);
+                }
+            });
+
+            $('#new-ingredient').keypress(function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    $('#add-ingredient').click();
+                }
+            });
+
+            function updateIngredients(newIngredient) {
+                var ingredientsArray;
+                try {
+                    ingredientsArray = JSON.parse($('#ingredients').val());
+                } catch (e) {
+                    ingredientsArray = [];
+                }
+                ingredientsArray.push(newIngredient);
+                $('#ingredients').val(JSON.stringify(ingredientsArray));
+                console.log("Ingredients Updated: ", $('#ingredients').val());
+            }
+
+            $('#add-instruction').click(function () {
+                var instruction = $('#new-instruction').val();
+                if (instruction.trim() !== '') {
+                    $('#instruction-ul').append('<li>' + instruction + '</li>');
+                    $('#new-instruction').val('');
+                    updateInstructions();
+                }
+            });
+
+            $('#new-instruction').keypress(function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    $('#add-instruction').click();
+                }
+            });
+
+            function updateInstructions() {
+                var instructionsArray = [];
+                $('#instruction-ul li').each(function (index) {
+                    instructionsArray.push({ InstructionNumber: index + 1, InstructionBody: $(this).text() });
+                });
+                $('#instructions').val(JSON.stringify(instructionsArray));
+                console.log("Instructions Updated: ", $('#instructions').val());
+            }
+
+            $('#recipeForm').submit(function () {
+                console.log("Form Submitted: ");
+                console.log("Sections: ", $('#sections').val());
+                console.log("Ingredients: ", $('#ingredients').val());
+                console.log("Instructions: ", $('#instructions').val());
+            });
+        });
+    </script>
+}
