@@ -1,0 +1,21 @@
+﻿User can view a list of recipes
+User can click on a recipe to view the recipe details
+User can post a recipe with associated details
+User can delete a recipe with associated details
+User can edit a recipe and associated details
+User can filter recipes by one or multiple categories
+User can search by recipe name
+User can search by ingredients
+User can have an admin account
+User can register an account with admin approval
+User can only access website when logged in
+User can only delete their own recipes
+Admin user can delete any recipe
+Admin user can add categories
+Admin user can add units
+User can add comment to recipe
+User can delete their own comment
+User can edit their own comment
+User can create a new collection
+User can add recipes to collection
+User can share collection with other users

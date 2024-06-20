@@ -64,14 +64,43 @@
                     }
                 </div>
             </div>
+            <div class="row">
 
+            <div class="col-md-6">
             @if (!string.IsNullOrEmpty(Model.Notes))
             {
-                <div class="mt-4">
                     <h5>Notes:</h5>
                     <p>@Model.Notes</p>
-                </div>
             }
+            </div>
+            <div class="col-md-6">
+                <button type="button" class="btn btn-danger col-md-6" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        Delete Recipe
+                    </button>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Delete @Model.DishName</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="bi bi-x-lg" style="color: #e21d20"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete @Model.DishName? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <form asp-action="Delete">
+                    <input type="hidden" value=@Model.Id asp-for="Id"/>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>

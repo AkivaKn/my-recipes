@@ -119,6 +119,23 @@ namespace MyRecipes.Controllers
                 if (dishDetails == null) return View("Empty");
                 return View(dishDetails);
             }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var dish = await _context.Dishes.FindAsync(id);
+            if (dish != null)
+            {
+                _context.Dishes.Remove(dish);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
-    } 
+    }
+} 
 
