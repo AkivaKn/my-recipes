@@ -103,7 +103,131 @@ namespace MyRecipes.Controllers
 
                 return RedirectToAction("Details", "Dishes", new { id = dish.Id });
             }
-        
+        public async Task<IActionResult> Edit(int id)
+        {
+            var units = await _context.Units.ToListAsync();
+            ViewBag.Units = units;
+            var categories = await _context.Categories.ToListAsync();
+            ViewBag.Categories = categories;
+            var dishDetails = await _context.Dishes
+             .Include(d => d.DishCategories)
+             .ThenInclude(dc => dc.Category)
+         .Include(d => d.Instructions)
+         .Include(d => d.Recipes)
+                 .ThenInclude(r => r.Ingredients)
+         .Include(d => d.Recipes)
+             .ThenInclude(r => r.Ingredients)
+                 .ThenInclude(i => i.Unit)
+         .FirstOrDefaultAsync(d => d.Id == id);
+            if (dishDetails == null) return View("Empty");
+            return View(dishDetails);
+        }
+        [HttpPost]
+        [ActionName("Edit")]
+        public async Task<IActionResult> EditPost(int id)
+        {
+            var dishToUpdate = await _context.Dishes
+                .Include(d => d.DishCategories)
+                .Include(d => d.Instructions)
+                .Include(d => d.Recipes)
+                    .ThenInclude(r => r.Ingredients)
+                .FirstOrDefaultAsync(d => d.Id == id);
+
+            if (dishToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            var dishName = Request.Form["DishName"];
+            var dishDescription = Request.Form["DishDescription"];
+            var servings = int.Parse(Request.Form["Servings"]);
+            var notes = Request.Form["Notes"];
+
+            dishToUpdate.DishName = dishName;
+            dishToUpdate.DishDescription = dishDescription;
+            dishToUpdate.Servings = servings;
+            dishToUpdate.Notes = notes;
+
+       
+            var categoriesJson = Request.Form["categories"];
+            var categories = JsonConvert.DeserializeObject<List<DishCategory>>(categoriesJson);
+            if (categories != null)
+            {
+           
+                dishToUpdate.DishCategories.Clear();
+                foreach (var category in categories)
+                {
+                    category.DishId = dishToUpdate.Id;
+                    dishToUpdate.DishCategories.Add(category);
+                }
+            }
+
+           
+            var instructionsJson = Request.Form["instructions"];
+            var instructions = JsonConvert.DeserializeObject<List<Instruction>>(instructionsJson);
+            if (instructions != null)
+            {
+              
+                dishToUpdate.Instructions.Clear();
+                foreach (var instruction in instructions)
+                {
+                    instruction.DishId = dishToUpdate.Id;
+                    dishToUpdate.Instructions.Add(instruction);
+                }
+            }
+
+          
+            var recipesJson = Request.Form["recipes"];
+            var recipes = JsonConvert.DeserializeObject<List<Recipe>>(recipesJson, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
+            if (recipes != null)
+            {
+             
+                dishToUpdate.Recipes.Clear();
+                foreach (var newRecipe in recipes)
+                {
+                    if (newRecipe.RecipeName != null)
+                    {
+                    var recipe = new Recipe
+                    {
+                        RecipeName = newRecipe.RecipeName,
+                        DishId = dishToUpdate.Id,
+                    };
+                    _context.Recipes.Add(recipe);
+                    await _context.SaveChangesAsync();
+                    foreach (var newIngredient in newRecipe.Ingredients)
+                    {
+                            if (newIngredient.IngredientName != null) 
+                            {
+                        var ingredient = new Ingredient
+                        {
+                            IngredientName = newIngredient.IngredientName,
+                            RecipeId = recipe.Id,
+                        };
+
+                                if (newIngredient.Unit.Id > 0)
+                                {
+                                    ingredient.UnitId = newIngredient.Unit.Id;
+                                }
+
+                                if (newIngredient.Quantity > 0)
+                                {
+                                    ingredient.Quantity = newIngredient.Quantity;
+                                }
+                                _context.Ingredients.Add(ingredient);
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", "Dishes", new { id = id });
+        }
+
         public async Task<IActionResult> Details(int id)
         {
             var dishDetails = await _context.Dishes

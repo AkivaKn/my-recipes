@@ -1,0 +1,404 @@
+﻿@using MyRecipes.Models
+@model MyRecipes.Models.Dish
+@{
+    ViewData["Title"] = "Edit Recipe";
+    var units = ViewBag.Units as List<Unit>;
+    var categories = ViewBag.Categories as List<Category>;
+}
+
+<div class="row text">
+    <div class="col-md-8 offset-2">
+        <h1>Edit Recipe</h1>
+        <div class="row">
+            <div class="col-md-8 offset-2">
+                <form asp-action="Edit" method="post" id="recipeForm" asp-route-id=@Model.Id>
+                    <div class="form-group">
+                        <label for="DishName">Dish Name</label>
+                        <input type="text" id="DishName" name="DishName" class="form-control" value="@Model.DishName" />
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Choose categories
+                        </button>
+                        <ul class="dropdown-menu">
+                            @foreach (var category in categories)
+                            {
+                                <li>
+                                    <div class="form-check">
+                                        <input class="form-check-input category-input" type="checkbox" value=@Json.Serialize(new DishCategory { CategoryId = category.Id, DishId = Model.Id }) id="@category.CategoryName" @(Model.DishCategories.Any(dc => dc.CategoryId == category.Id) ? "checked" : "")>
+                                        <label class="form-check-label" for="@category.CategoryName">
+                                            @category.CategoryName
+                                        </label>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    <input type="hidden" id="categories" name="categories" class="form-control" value=@Json.Serialize(Model.DishCategories.ToArray()) />
+
+                    <div class="form-group">
+                        <label for="DishDescription">Dish Description</label>
+                        <textarea id="DishDescription" name="DishDescription" class="form-control">@Model.DishDescription</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Servings">Servings</label>
+                        <input type="number" id="Servings" name="Servings" class="form-control" value="@Model.Servings" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Notes">Notes</label>
+                        <textarea id="Notes" name="Notes" class="form-control">@Model.Notes</textarea>
+                    </div>
+
+                    <div class="form-group" id="recipes-list">
+                        <label>Recipes:</label>
+                        <ul id="recipe-ul">
+                            @foreach (var recipe in Model.Recipes)
+                            {
+                                <li>
+                                    <input type="text" class="form-control recipe-input" value="@recipe.RecipeName" placeholder="Enter recipe title" />
+                                    <ul class="ingredient-list">
+                                        @foreach (var ingredient in recipe.Ingredients)
+                                        {
+                                            <li>
+                                                <input type="text" class="form-control ingredient-input" value="@ingredient.Quantity @ingredient.Unit?.UnitName @ingredient.IngredientName" placeholder="Ingredient" />
+                                                <button type="button" class="btn btn-danger delete-ingredient">Delete</button>
+                                            </li>
+                                        }
+                                    </ul>
+                                    <button type="button" class="btn btn-primary add-ingredient">Add Ingredient</button>
+                                    <button type="button" class="btn btn-danger delete-recipe">Delete Recipe</button>
+                                </li>
+                            }
+                        </ul>
+                        <button type="button" id="show-add-recipe" class="btn btn-primary">Add New Recipe</button>
+                        <div id="add-recipe-form" style="display: none;">
+                            <input type="text" id="new-recipe-title" class="form-control mb-2" placeholder="Enter recipe title" />
+                            <div id="new-ingredient-list">
+                                <div class="mb-2">
+                                    <input type="text" class="form-control new-ingredient" placeholder="Quantity Unit Ingredient" />
+                                    <button type="button" class="btn btn-danger delete-new-ingredient">Delete</button>
+                                </div>
+                            </div>
+                            <button type="button" id="add-new-ingredient" class="btn btn-primary">Add Ingredient</button>
+                            <button type="button" id="save-new-recipe" class="btn btn-success">Save New Recipe</button>
+                        </div>
+                        <input type="hidden" id="recipes" name="recipes" value="@Html.Raw(Json.Serialize(Model.Recipes))" />
+                    </div>
+
+
+
+
+
+                    <div class="form-group" id="instructions-list">
+                        <label>Instructions:</label>
+                        <ul id="instruction-ul">
+                            @foreach (var instruction in Model.Instructions)
+                            {
+                                <li>
+                                    <input type="text" class="form-control instruction-input" value="@instruction.InstructionBody" data-instruction-id="@instruction.Id" data-instruction-number="@instruction.InstructionNumber" />
+                                    <button type="button" class="btn btn-danger delete-instruction">Delete</button>
+                                </li>
+                            }
+                        </ul>
+                        <input type="text" id="new-instruction" name="new-instruction" class="form-control" placeholder="Enter instruction and press Enter" />
+                        <button type="button" id="add-instruction" class="btn btn-primary">Add Instruction</button>
+                        <input type="hidden" id="instructions" name="instructions" value=@Json.Serialize(Model.Instructions.ToArray()) />
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var units = @Json.Serialize(ViewBag.Units);
+            
+            $('input, textarea').keypress(function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    var $this = $(this);
+                    var index = $('input, textarea').index($this);
+                    $('input, textarea').eq(index + 1).focus();
+                }
+            });
+
+            $('.category-input').change(
+                function () {
+                    let category = JSON.parse($(this).val());
+                    if ($(this).is(':checked')) {
+                        updateCategories(category);
+                    } else {
+                        deleteCategory(category.categoryId);
+                    }
+                });
+
+            function updateCategories(newCategory) {
+                let categoriesArray;
+                try {
+                    categoriesArray = JSON.parse($('#categories').val());
+                    console.log(categoriesArray, 'is categories')
+                } catch (e) {
+                    categoriesArray = [];
+                }
+                categoriesArray.push(newCategory);
+                $('#categories').val(JSON.stringify(categoriesArray));
+                console.log("Categories Updated: ", $('#categories').val());
+            }
+
+            function deleteCategory(categoryId) {
+                let categoriesArray;
+                try {
+                    categoriesArray = JSON.parse($('#categories').val());
+                    console.log(categoriesArray, 'is categories')
+                } catch (e) {
+                    categoriesArray = [];
+                }
+                const categories = categoriesArray.filter((category) => category.categoryId !== categoryId);
+                $('#categories').val(JSON.stringify(categories));
+                console.log("Categories Updated: ", $('#categories').val());
+            }
+
+
+            $('#show-add-recipe').click(function () {
+                showNewRecipeForm();
+            });
+
+            function showNewRecipeForm() {
+                $('#new-recipe-title').val('');
+                $('#new-ingredient-list').empty().append('<div class="mb-2"><input type="text" class="form-control new-ingredient" placeholder="Quantity Unit Ingredient" /><button type="button" class="btn btn-danger delete-new-ingredient">Delete</button></div>');
+                $('#add-recipe-form').slideDown();
+                $('#new-ingredient-list input').focus();
+            }
+
+            $('#add-recipe-form').on('keypress', '.new-ingredient', function (e) {
+                if (e.which === 13) { 
+                    e.preventDefault();
+
+                    addNewIngredientInput();
+                }
+            });
+
+            
+            $('#add-new-ingredient').click(function () {
+                addNewIngredientInput();
+            });
+
+            function addNewIngredientInput() {
+                $('#new-ingredient-list').append('<div class="mb-2"><input type="text" class="form-control new-ingredient" placeholder="Quantity Unit Ingredient" /><button type="button" class="btn btn-danger delete-new-ingredient">Delete</button></div>');
+                $('#new-ingredient-list').find('input.new-ingredient').last().focus();
+            }
+
+            
+            $('#add-recipe-form').on('click', '.delete-new-ingredient', function () {
+                $(this).parent().remove();
+            });
+
+            
+            $('#save-new-recipe').click(function () {
+                var recipeTitle = $('#new-recipe-title').val().trim();
+                if (recipeTitle === '') {
+                    alert('Please enter a recipe title.');
+                    return;
+                }
+
+                var ingredientsArray = [];
+                $('#new-ingredient-list .new-ingredient').each(function () {
+                    var ingredientText = $(this).val().trim();
+                    if (ingredientText !== '') {
+                        var words = ingredientText.split(' ');
+                        var Quantity;
+                        var IngredientName;
+                        var UnitId;
+                        var UnitName;
+                        if (!isNaN(words[0])) {
+                            Quantity = parseInt(words.shift());
+                        }
+                        IngredientName = words.join(' ');
+                        console.log(units.length,'is unit length')
+                        for (var i = 0; i < units.length; i++) {
+                            console.log(units[i].unitName)
+
+                            if (words[0] === units[i].unitName || words[0] === units[i].pluralName) {
+                                UnitId = units[i].id;
+                                UnitName = words[0];
+                                IngredientName = words.slice(1).join(' ');
+                                break;
+                            }
+                        }
+
+                        var newIngredient = {
+                            Quantity: Quantity || null,
+                            IngredientName: IngredientName || "",
+                            Unit: { Id: UnitId || null, UnitName: UnitName || "" }
+                        };
+                        ingredientsArray.push(newIngredient);
+                    }
+                });
+
+                var newRecipe = {
+                    RecipeName: recipeTitle,
+                    Ingredients: ingredientsArray
+                };
+
+                $('#recipe-ul').append('<li><input type="text" class="form-control recipe-input" value="' + newRecipe.RecipeName + '" placeholder="Enter recipe title" />' +
+                    '<ul class="ingredient-list">' +
+                    ingredientsArray.map(function (ingredient) {
+                        return '<li><input type="text" class="form-control ingredient-input" value="' + (ingredient.Quantity ? ingredient.Quantity + ' ' : '') + ingredient.Unit?.UnitName + ' ' + ingredient.IngredientName + '" placeholder="Quantity Unit Ingredient" />' +
+                            '<button type="button" class="btn btn-danger delete-ingredient">Delete</button></li>';
+                    }).join('') +
+                    '</ul><button type="button" class="btn btn-primary add-ingredient">Add Ingredient</button>' +
+                    '<button type="button" class="btn btn-danger delete-recipe">Delete Recipe</button></li>');
+
+                updateRecipes();
+                $('#add-recipe-form').slideUp();
+                $('#new-recipe-title').val('');
+                $('#new-ingredient-list').empty();
+            });
+
+            
+            $(document).on('change', '.recipe-input', function () {
+                updateRecipes();
+            });
+
+            $(document).on('change', '.ingredient-input', function () {
+                updateRecipes();
+            });
+
+            
+            $(document).on('click', '.add-ingredient', function () {
+                var $ingredientList = $(this).prev('.ingredient-list');
+                addIngredientInput($ingredientList.find('li').last());
+            });
+            $('#recipe-ul').on('keypress', '.ingredient-input', function (e) {
+                if (e.which === 13) { 
+                    e.preventDefault();
+                    var $currentInput = $(this);
+                    var $nextInput = $currentInput.closest('li').next().find('.ingredient-input');
+
+                    if ($nextInput.length === 0) {
+                       
+                        addIngredientInput($currentInput.closest('li'));
+                    } else {
+                        $nextInput.focus();
+                    }
+                }
+            });
+            function addIngredientInput($currentLi) {
+                $currentLi.after('<li><input type="text" class="form-control ingredient-input" placeholder="Ingredient" />' +
+                    '<button type="button" class="btn btn-danger delete-ingredient">Delete</button></li>');
+                $currentLi.next().find('.ingredient-input').focus();
+            }
+
+
+            // Delete ingredient from existing recipe
+            $(document).on('click', '.delete-ingredient', function () {
+                $(this).closest('li').remove();
+                updateRecipes();
+            });
+
+            // Delete recipe
+            $(document).on('click', '.delete-recipe', function () {
+                $(this).closest('li').remove();
+                updateRecipes();
+            });
+
+            // Update recipes hidden input
+            function updateRecipes() {
+                var recipesArray = [];
+                $('#recipe-ul li').each(function () {
+                    var recipeName = $(this).find('.recipe-input').val();
+                    var ingredientsArray = [];
+                    $(this).find('.ingredient-list li').each(function () {
+                        var ingredientText = $(this).find('.ingredient-input').val().trim();
+                        if (ingredientText !== '') {
+                            var words = ingredientText.split(' ');
+                            var Quantity;
+                            var IngredientName;
+                            var UnitId;
+                            var UnitName;
+                            if (!isNaN(words[0])) {
+                                Quantity = parseInt(words.shift());
+                            }
+                            IngredientName = words.join(' ');
+
+                            for (var i = 0; i < units.length; i++) {
+                                console.log(units[i].unitName)
+                                if (words[0] === units[i].unitName || words[0] === units[i].pluralName) {
+                                    UnitId = units[i].id;
+                                    UnitName = words[0];
+                                    IngredientName = words.slice(1).join(' ');
+                                    break;
+                                }
+                            }
+
+                            var ingredient = {
+                                Quantity: Quantity || null,
+                                IngredientName: IngredientName || "",
+                                Unit: { Id: UnitId || null, UnitName: UnitName || "" }
+                            };
+                            ingredientsArray.push(ingredient);
+                        }
+                    });
+
+                    var recipe = {
+                        RecipeName: recipeName,
+                        Ingredients: ingredientsArray
+                    };
+                    recipesArray.push(recipe);
+                });
+
+                $('#recipes').val(JSON.stringify(recipesArray));
+                console.log("Recipes Updated: ", $('#recipes').val());
+            }
+
+          
+           
+
+            $('#add-instruction').click(function () {
+                    var newInstruction = $('#new-instruction').val().trim();
+                    if (newInstruction !== '') {
+                        var instructionNumber = $('#instruction-ul').find('.instruction-input').length + 1;
+                        $('#instruction-ul').append('<li><input type="text" class="form-control instruction-input" value="' + newInstruction + '" data-instruction-number="' + instructionNumber + '" /><button type="button" class="btn btn-danger delete-instruction">Delete</button></li>');
+                        updateInstructions();
+                        $('#new-instruction').val('');
+                    }
+                });
+
+            $('#new-instruction').keypress(function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    $('#add-instruction').click();
+                }
+            });
+
+            $(document).on('click', '.delete-instruction', function () {
+                $(this).closest('li').remove();
+                updateInstructions();
+            });
+
+            function updateInstructions() {
+                var instructionsArray = [];
+                $('#instruction-ul').find('.instruction-input').each(function () {
+                    instructionsArray.push({
+                        Id: $(this).data('instruction-id'),
+                        InstructionNumber: $(this).data('instruction-number'),
+                        InstructionBody: $(this).val()
+                    });
+                });
+                $('#instructions').val(JSON.stringify(instructionsArray));
+                console.log("Instructions Updated: ", $('#instructions').val());
+            }
+
+            $('#recipeForm').submit(function () {
+                updateInstructions();
+                updateRecipes();
+            });
+        });
+    </script>
+}
