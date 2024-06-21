@@ -5,6 +5,11 @@
 
 <div class="container mt-5">
     <h1 class="mb-4">Recipes</h1>
+    <div class="row">
+        <div class="col-md-3">
+            @await Html.PartialAsync("_CategoryFilterPartial", ViewBag.Categories as IEnumerable<MyRecipes.Models.Category>)
+        </div>
+        <div class="col-md-9">
     <div class="list-group">
         @foreach (var dish in Model)
         {

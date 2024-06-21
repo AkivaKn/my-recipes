@@ -14,13 +14,21 @@ namespace MyRecipes.Controllers
         {
             _context = context;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int[] categories)
         {
             var allDishes = await _context.Dishes
                  .Include(r => r.DishCategories)
             .ThenInclude(dc => dc.Category)
                 .ToListAsync();
-
+            if (categories != null && categories.Length > 0)
+            {
+                allDishes = allDishes
+                    .Where(d => d.DishCategories.Any(dc => categories.Contains(dc.CategoryId)))
+                    .ToList();
+            }
+            var allCategories = await _context.Categories.ToListAsync();
+            ViewBag.Categories = allCategories;
+            ViewBag.SelectedCategories = categories;
             return View(allDishes);
         }
         [HttpGet]
