@@ -4,27 +4,78 @@
 }
 
 <div class="container mt-5">
-    <h1 class="mb-4">Recipes</h1>
+    @using (Html.BeginForm())
+    {
+        <p>
+            Find by name: @Html.TextBox("nameSearchString")
+        </p>
+    }
     <div class="row">
         <div class="col-md-3">
             @await Html.PartialAsync("_CategoryFilterPartial", ViewBag.Categories as IEnumerable<MyRecipes.Models.Category>)
         </div>
-        <div class="col-md-9">
-    <div class="list-group">
-        @foreach (var dish in Model)
-        {
-            <div class="list-group-item">
-                <a asp-action="Details" asp-route-id="@dish.Id"><h5 class="mb-2">@dish.DishName</h5></a>
-                <p class="mb-2">@dish.DishDescription</p>
-                <p>
-                    <small class="text-muted">Categories:</small>
-                    @foreach (var dishCategory in dish.DishCategories)
-                    {
-                        <span class="badge badge-primary text-black">@dishCategory.Category.CategoryName</span>
-                    }
-                </p>
+    <div class="col-md-9">
+            <div id="loading">
+                    <p>Loading...</p>
+                <div class="spinner-border" role="status">
+                </div>
             </div>
-            <hr class="my-4" style="border-color: #ddd;">
-        }
-    </div>
+            <div id="dish-list" style="display: none;">
+            </div>
 </div>
+    </div>
+
+    @section Scripts {
+        <script>
+            $(document).ready(function () {
+               
+
+                function displayDishes(dishes) {
+                    const dishList = $('#dish-list');
+                    dishList.empty();
+                    dishes.forEach(dish => {
+                        const dishDescription = dish.dishDescription !== null? `<p class="mb-2">${dish.dishDescription}</p>` : '';
+                        const dishItem = `<div class="list-group-item">
+                                    <a asp-action="Details" asp-route-id="${dish.id}"><h5 class="mb-2">${dish.dishName}</h5></a>
+                                               ${dishDescription}
+                                    <p><small class="text-muted">Categories:</small> ${dish.categories.map(dc => `<span class="badge badge-primary text-black">${dc.categoryName}</span>`).join(' ')}</p>
+                                </div>
+                                <hr class="my-4" style="border-color: #ddd;">`;
+                        dishList.append(dishItem);
+                    });
+                }
+
+                
+                $.ajax({
+                    url: '@Url.Action("GetDishesJson", "Dishes")',
+                    type: 'GET',
+                    success: function (data) {
+                        allDishes = data;
+                        displayDishes(allDishes);
+                        $('#dish-list').show();
+                        $('#loading').hide();
+                    },
+                    error: function () {
+                        $('#loading').text('Failed to load dishes.');
+                    }
+                });
+
+
+                function filterDishes() {
+                    const searchString = $('#nameSearchString').val().toLowerCase();
+                    const selectedCategories = $('input[name="categories"]:checked').map(function () { return this.value; }).get();
+                    const filteredDishes = allDishes.filter(dish => {
+                        const matchesSearch = dish.dishName.toLowerCase().includes(searchString);
+                        const matchesCategory = selectedCategories.length === 0 || dish.categories.some(dc => selectedCategories.includes(dc.id.toString()));
+                        return matchesSearch && matchesCategory;
+                    });
+
+                    displayDishes(filteredDishes);
+                }
+
+                $('#nameSearchString').on('input', filterDishes);
+                $('input[name="categories"]').on('change', filterDishes);
+            });
+        </script>
+    }
+

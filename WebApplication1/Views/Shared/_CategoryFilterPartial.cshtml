@@ -1,9 +1,5 @@
 ﻿@model IEnumerable<MyRecipes.Models.Category>
 
-@{
-    var selectedCategories = ViewBag.SelectedCategories as int[] ?? new int[] { };
-}
-
 <div class="sidebar">
     <h3>Filter by Category</h3>
     <form method="get" asp-action="Index">
@@ -12,8 +8,7 @@
             foreach (var category in Model)
             {
                 <div>
-                    <input type="checkbox" name="categories" value="@category.Id" id="category_@category.Id"
-                    @(selectedCategories.Contains(category.Id) ? "checked" : "") />
+                    <input type="checkbox" name="categories" value="@category.Id" id="category_@category.Id" />
                     <label for="category_@category.Id">@category.CategoryName</label>
                 </div>
             }
@@ -22,6 +17,5 @@
         {
             <p>No categories available</p>
         }
-        <button type="submit" class="btn btn-primary mt-2">Filter</button>
     </form>
 </div>

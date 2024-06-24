@@ -6,6 +6,8 @@ User can edit a recipe and associated details
 User can filter recipes by one or multiple categories
 User can search by recipe name
 User can search by ingredients
+User can paste multiple ingredients at a time
+User can paste multiple instructions at a time
 User can have an admin account
 Users can scroll for paginated recipes in recipes list
 User can register an account with admin approval
@@ -14,6 +16,7 @@ User can only delete their own recipes
 Admin user can delete any recipe
 Admin user can add categories
 Admin user can add units
+User can search or filter without the whole page refreshing
 User can add comment to recipe
 User can delete their own comment
 User can edit their own comment
