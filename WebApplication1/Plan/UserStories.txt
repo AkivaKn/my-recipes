@@ -16,7 +16,6 @@ User can only delete their own recipes
 Admin user can delete any recipe
 Admin user can add categories
 Admin user can add units
-User can search or filter without the whole page refreshing
 User can add comment to recipe
 User can delete their own comment
 User can edit their own comment

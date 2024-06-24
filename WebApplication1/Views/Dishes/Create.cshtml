@@ -57,9 +57,9 @@
                         <ul id="recipe-ul"></ul>
                         <input type="text" id="new-section-title" name="new-section-title" class="form-control" placeholder="Enter title" />
                         <div class="form-group" id="ingredients-list">
-                            <ul id="ingredient-ul"></ul>
-                            <input type="text" id="new-ingredient" name="new-ingredient" class="form-control" placeholder="Enter ingredient and press Enter" />
-                            <button type="button" id="add-ingredient" class="btn btn-primary">Add Ingredient</button>
+                            <ul id="ingredients-ul"></ul>
+                            <textarea id="new-ingredients" name="new-ingredients" class="form-control" placeholder="Enter one or multiple ingredients and press Enter" ></textarea>
+                            <button type="button" id="add-ingredients" class="btn btn-primary">Add Ingredients</button>
                             <input type="hidden" id="ingredients" name="ingredients" class="form-control" value="[]" />
                         </div>
                         <input type="hidden" id="sections" name="sections" value="[]" />
@@ -69,8 +69,8 @@
                     <div class="form-group" id="instructions-list">
                         <label>Instructions:</label>
                         <ul id="instruction-ul"></ul>
-                        <textarea id="new-instruction" name="new-instruction" class="form-control" placeholder="Enter instruction and press Enter"></textarea>
-                        <button type="button" id="add-instruction" class="btn btn-primary">Add Instruction</button>
+                        <textarea id="new-instructions" name="new-instructions" class="form-control" placeholder="Enter one or multiple instructions and press Enter"></textarea>
+                        <button type="button" id="add-instructions" class="btn btn-primary">Add Instructions</button>
                         <input type="hidden" id="instructions" name="instructions" />
                     </div>
 
@@ -166,10 +166,12 @@
                 console.log("Sections Updated: ", $('#sections').val());
             }
 
-            $('#add-ingredient').click(function () {
-                var ingredientValue = $('#new-ingredient').val();
-                if (ingredientValue.trim() !== '') {
-                    let words = ingredientValue.split(' ');
+            $('#add-ingredients').click(function () {
+                const ingredientData = $('#new-ingredients').val();
+                const ingredients = ingredientData.split('\n');
+                ingredients.forEach((ingredient) => {
+                if (ingredient.trim() !== '') {
+                    let words = ingredient.split(' ');
                     let Quantity;
                     let IngredientName;
                     let UnitId;
@@ -178,7 +180,7 @@
                         Quantity = parseInt(words.shift());
                         IngredientName = words.join(' ');
                     } else {
-                        IngredientName = ingredientValue;
+                        IngredientName = ingredient;
                     }
                     words = IngredientName.split(' ');
 
@@ -196,16 +198,17 @@
                         UnitId: UnitId || null,
                         UnitName: UnitName || "",
                     };
-                    $('#ingredient-ul').append('<li>' + (newIngredient.Quantity ? newIngredient.Quantity + ' ' : '') + (newIngredient.UnitName ? newIngredient.UnitName + ' ' : '') + newIngredient.IngredientName + '</li>');
-                    $('#new-ingredient').val('');
+                    $('#ingredients-ul').append('<li>' + (newIngredient.Quantity ? newIngredient.Quantity + ' ' : '') + (newIngredient.UnitName ? newIngredient.UnitName + ' ' : '') + newIngredient.IngredientName + '</li>');
+                $('#new-ingredients').val('');
                     updateIngredients(newIngredient);
                 }
+                })
             });
 
-            $('#new-ingredient').keypress(function (e) {
+            $('#new-ingredients').keypress(function (e) {
                 if (e.which === 13) {
                     e.preventDefault();
-                    $('#add-ingredient').click();
+                    $('#add-ingredients').click();
                 }
             });
 
@@ -221,13 +224,16 @@
                 console.log("Ingredients Updated: ", $('#ingredients').val());
             }
 
-            $('#add-instruction').click(function () {
-                var instruction = $('#new-instruction').val();
-                if (instruction.trim() !== '') {
+            $('#add-instructions').click(function () {
+                var instructionData = $('#new-instructions').val();
+                var instructions = instructionData.split('\n');
+                instructions.forEach((instruction) => 
+               { if (instruction.trim() !== '') {
                     $('#instruction-ul').append('<li>' + instruction + '</li>');
-                    $('#new-instruction').val('');
+                }}
+                )
+                    $('#new-instructions').val('');
                     updateInstructions();
-                }
             });
 
             $('#new-instruction').keypress(function (e) {
@@ -243,15 +249,7 @@
                     instructionsArray.push({ InstructionNumber: index + 1, InstructionBody: $(this).text() });
                 });
                 $('#instructions').val(JSON.stringify(instructionsArray));
-                console.log("Instructions Updated: ", $('#instructions').val());
             }
-
-            $('#recipeForm').submit(function () {
-                console.log("Form Submitted: ");
-                console.log("Sections: ", $('#sections').val());
-                console.log("Ingredients: ", $('#ingredients').val());
-                console.log("Instructions: ", $('#instructions').val());
-            });
         });
     </script>
 }
