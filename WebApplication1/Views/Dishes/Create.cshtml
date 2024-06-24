@@ -170,14 +170,14 @@
                 const ingredientData = $('#new-ingredients').val();
                 const ingredients = ingredientData.split('\n');
                 ingredients.forEach((ingredient) => {
-                if (ingredient.trim() !== '') {
-                    let words = ingredient.split(' ');
-                    let Quantity;
-                    let IngredientName;
-                    let UnitId;
-                    let UnitName;
-                    if (!isNaN(words[0])) {
-                        Quantity = parseInt(words.shift());
+                    if (ingredient.trim() !== '') {
+                        let words = ingredient.split(' ');
+                        let Quantity;
+                        let IngredientName;
+                        let UnitId;
+                        let UnitName;
+                        if (!isNaN(eval(words[0]))) {
+                        Quantity = eval(words.shift());
                         IngredientName = words.join(' ');
                     } else {
                         IngredientName = ingredient;
