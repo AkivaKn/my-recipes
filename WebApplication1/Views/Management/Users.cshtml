@@ -1,0 +1,39 @@
+﻿@model IEnumerable<MyRecipes.Models.User>
+
+<div class="container mt-5">
+    <h1>Users</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>UserName</th>
+                <th>Email</th>
+                <th>Roles</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                    <td>
+                        <small class="text-muted">
+                            @foreach (var role in user.Roles)
+                            {
+
+                                <p>@role </p>
+                            }
+                        </small>
+                    </td>
+                    <td>
+                        <a asp-action="ModifyRoles" asp-route-id="@user.UserId"  class="btn btn-primary btn-sm">Modify Roles</a>
+                        @if (user.Roles.Contains("UnapprovedUser"))
+                        {
+                            <a asp-action="ApproveUser" asp-route-id="@user.UserId" asp-route-roles="User" class="btn btn-primary btn-sm">Approve User</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

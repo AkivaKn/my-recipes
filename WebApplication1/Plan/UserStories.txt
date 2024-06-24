@@ -9,8 +9,9 @@ User can search by ingredients
 User can paste multiple ingredients at a time
 User can paste multiple instructions at a time
 User can have an admin account
-Users can scroll for paginated recipes in recipes list
-User can register an account with admin approval
+User can have a management account
+Admin user can give another user management access
+User can register an account with admin or management approval
 User can only access website when logged in
 User can only delete their own recipes
 Admin user can delete any recipe
