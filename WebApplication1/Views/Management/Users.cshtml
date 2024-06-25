@@ -32,32 +32,41 @@
                     @if ( currentUserRoles.Contains("Admin"))
                     {
                     <td>
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modifyRolesModal-@user.UserId">
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modifyRolesModal" data-bs-userId=@user.UserId data-bs-roles=@Json.Serialize(user.Roles.ToArray()) data-bs-userName="@user.UserName">
                             Modify Roles
                         </button>
-                        <div class="modal fade" id="modifyRolesModal-@user.UserId" tabindex="-1" role="dialog" aria-labelledby="modifyRolesModalLabel-@user.UserId" aria-hidden="true">
+                        @if (user.Roles.Contains("UnapprovedUser"))
+                        {
+                            <a asp-action="ApproveUser" asp-route-id="@user.UserId" asp-route-roles="User" class="btn btn-primary btn-sm">Approve User</a>
+                        }
+                    </td>
+                    }
+
+                </tr>
+            }
+                        <div class="modal fade" id="modifyRolesModal" tabindex="-1" role="dialog" aria-labelledby="modifyRolesModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="modifyRolesModalLabel-@user.UserId">Modify Roles for @user.UserName</h5>
+                                        <h5 class="modal-title" id="modifyRolesModalLabel"></h5>
                                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">
                                         <form asp-action="ModifyUserRoles" method="post">
-                                            <input type="hidden" name="UserId" value="@user.UserId" />
+                                            <input type="hidden" name="UserId" id="user-id-input"/>
                                             <div class="form-group">
                                                 <label for="roles">Roles</label>
                                                 @foreach (var role in ViewBag.Roles)
                                                 {
                                                     <div>
-                                                        <input type="checkbox" class="role-input" name="role_@role.Name" value="@role.Name" id="role_@role.Name" @(user.Roles.Contains(role.Name) ? "checked" : "") />
+                                                        <input type="checkbox" class="role-input" name="role_@role.Name" value="@role.Name" id="role_@role.Name"  />
                                                         <label for="role_@role.Name">@role.Name</label>
                                                     </div>
                                                 }
                                             </div>
-                                            <input type="hidden" id="roles" name="roles" class="form-control" value=@Json.Serialize(user.Roles.ToArray()) />
+                                            <input type="hidden" id="roles" name="roles" class="form-control"/>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                 <button type="submit" class="btn btn-primary">Save changes</button>
@@ -68,15 +77,6 @@
                             </div>
                         </div>
 
-                        @if (user.Roles.Contains("UnapprovedUser"))
-                        {
-                            <a asp-action="ApproveUser" asp-route-id="@user.UserId" asp-route-roles="User" class="btn btn-primary btn-sm">Approve User</a>
-                        }
-                    </td>
-                    }
-
-                </tr>
-            }
         </tbody>
     </table>
 </div>
@@ -84,6 +84,28 @@
 
     <script>
         $(document).ready(function () {
+            $('#modifyRolesModal').on('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var userId = button.getAttribute('data-bs-userId');
+                var userName = button.getAttribute('data-bs-userName');
+                var rolesJson = button.getAttribute('data-bs-roles');
+                var roles = JSON.parse(rolesJson);
+                console.log(userId, 'is the user');
+                console.log(roles, 'are the users roles');
+                console.log(userName, 'is the users username');
+                var modal = $(this);
+                modal.find('.modal-title').text('Modify roles for ' + userName);
+                modal.find('#roles').val(rolesJson);
+                modal.find('#user-id-input').val(userId);
+                console.log($('#user-id-input').val());
+                console.log($('#roles').val());
+                modal.find('.role-input').each(function () {
+                    var role = $(this).val();
+                    if (roles.includes(role)) {
+                        $(this).prop("checked",true);
+                    }
+                })
+            })
             $('.role-input').change(
                 function () {
                     let role = $(this).val();
