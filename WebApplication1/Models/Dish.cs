@@ -1,6 +1,8 @@
 ﻿
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyRecipes.Models
 {
@@ -21,6 +23,9 @@ namespace MyRecipes.Models
 
         [ValidateNever]
         public string? Notes { get; set; }
+        public string? UserId { get; set; }
+        [ForeignKey("UserId")]
+        public ApplicationUser User { get; set; }
         public List<DishCategory> DishCategories { get; set; }
 
         [ValidateNever]

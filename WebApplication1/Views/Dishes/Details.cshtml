@@ -1,20 +1,28 @@
 ﻿@model MyRecipes.Models.Dish
 @{
     ViewData["Title"] = Model.DishName;
+    var currentUserId = ViewBag.currentUserId;
 }
 
 <div class="container mt-5">
     <div class="card">
         <div class="card-body">
             <h2 class="card-title">@Model.DishName</h2>
-            @if(Model.DishCategories != null){ <p>
-                <small class="text-muted">Categories:</small>
-                @foreach (var dishCategory in Model.DishCategories)
-                {
-                    <span class="badge badge-primary text-black">@dishCategory.Category.CategoryName</span>
-                }
-            </p>}
-            @if(Model.Servings != null)
+            @if (Model.User != null)
+            {
+                <h5 class="card-subtitle">@Model.User.UserName</h5>
+            }
+            @if (Model.DishCategories != null)
+            {
+                <p>
+                    <small class="text-muted">Categories:</small>
+                    @foreach (var dishCategory in Model.DishCategories)
+                    {
+                        <span class="badge badge-primary text-black">@dishCategory.Category.CategoryName</span>
+                    }
+                </p>
+            }
+            @if (Model.Servings != null)
             {
                 <p>@Model.Servings Servings</p>
             }
@@ -66,18 +74,18 @@
             </div>
             <div class="row">
 
-            <div class="col-md-6">
-            @if (!string.IsNullOrEmpty(Model.Notes))
-            {
-                    <h5>Notes:</h5>
-                    <p>@Model.Notes</p>
-            }
-            </div>
-            <div class="col-md-6">
-                <button type="button" class="btn btn-danger col-md-6" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                <div class="col-md-6">
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <h5>Notes:</h5>
+                        <p>@Model.Notes</p>
+                    }
+                </div>
+                <div class="col-md-6">
+                    <button type="button" class="btn btn-danger col-md-6" data-bs-toggle="modal" data-bs-target="#deleteModal">
                         Delete Recipe
                     </button>
-            </div>
+                </div>
             </div>
         </div>
     </div>
@@ -97,7 +105,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <form asp-action="Delete">
-                    <input type="hidden" value=@Model.Id asp-for="Id"/>
+                    <input type="hidden" value=@Model.Id asp-for="Id" />
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
             </div>

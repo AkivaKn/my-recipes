@@ -176,8 +176,8 @@
                         let IngredientName;
                         let UnitId;
                         let UnitName;
-                        if (!isNaN(eval(words[0]))) {
-                        Quantity = eval(words.shift());
+                        if (!isNaN(parseFloat(words[0]))) {
+                        Quantity = parseFloat(words.shift());
                         IngredientName = words.join(' ');
                     } else {
                         IngredientName = ingredient;
@@ -236,10 +236,10 @@
                     updateInstructions();
             });
 
-            $('#new-instruction').keypress(function (e) {
+            $('#new-instructions').keypress(function (e) {
                 if (e.which === 13) {
                     e.preventDefault();
-                    $('#add-instruction').click();
+                    $('#add-instructions').click();
                 }
             });
 

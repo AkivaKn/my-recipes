@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyRecipes.Data;
@@ -12,9 +13,13 @@ namespace MyRecipes.Controllers
     public class DishesController : Controller
     {
         private readonly AppDbContext _context;
-        public DishesController(AppDbContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public DishesController(AppDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
         public async Task<JsonResult> GetDishesJson()
         {
@@ -56,6 +61,8 @@ namespace MyRecipes.Controllers
         [ActionName("Create")]
         public async Task<IActionResult> CreatePost()
         {
+            var currentUserId = _userManager.GetUserId(HttpContext.User);
+            Console.WriteLine($"{ currentUserId} is the current users id");
             var dishName = Request.Form["DishName"];
             var dishDescription = Request.Form["DishDescription"];
             var servings = int.Parse(Request.Form["Servings"]);
@@ -66,6 +73,7 @@ namespace MyRecipes.Controllers
                 DishDescription = dishDescription,
                 Servings = servings,
                 Notes = notes,
+                UserId = currentUserId
             };
             await _context.Dishes.AddAsync(dish);
             await _context.SaveChangesAsync();
@@ -250,7 +258,9 @@ namespace MyRecipes.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
+            ViewBag.currentUserId = _userManager.GetUserId(HttpContext.User);
             var dishDetails = await _context.Dishes
+                .Include(d => d.User)
              .Include(d => d.DishCategories)
              .ThenInclude(dc => dc.Category)
          .Include(d => d.Instructions)
