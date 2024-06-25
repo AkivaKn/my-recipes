@@ -117,6 +117,7 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
+            console.log('document ready');
             var units = @Json.Serialize(ViewBag.Units);
             
             $('input, textarea').keypress(function (e) {

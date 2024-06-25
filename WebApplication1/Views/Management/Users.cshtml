@@ -1,5 +1,8 @@
 ﻿@model IEnumerable<MyRecipes.Models.User>
-
+@{
+    var roles = ViewBag.Roles as List<Microsoft.AspNetCore.Identity.IdentityRole>;
+    ViewBag.Roles = roles;
+}
 <div class="container mt-5">
     <h1>Users</h1>
     <table class="table">
@@ -26,7 +29,42 @@
                         </small>
                     </td>
                     <td>
-                        <a asp-action="ModifyRoles" asp-route-id="@user.UserId"  class="btn btn-primary btn-sm">Modify Roles</a>
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modifyRolesModal-@user.UserId">
+                            Modify Roles
+                        </button>
+                        <div class="modal fade" id="modifyRolesModal-@user.UserId" tabindex="-1" role="dialog" aria-labelledby="modifyRolesModalLabel-@user.UserId" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modifyRolesModalLabel-@user.UserId">Modify Roles for @user.UserName</h5>
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form asp-action="ModifyUserRoles" method="post">
+                                            <input type="hidden" name="UserId" value="@user.UserId" />
+                                            <div class="form-group">
+                                                <label for="roles">Roles</label>
+                                                @foreach (var role in ViewBag.Roles)
+                                                {
+                                                    <div>
+                                                        <input type="checkbox" class="role-input" name="role_@role.Name" value="@role.Name" id="role_@role.Name" @(user.Roles.Contains(role.Name) ? "checked" : "") />
+                                                        <label for="role_@role.Name">@role.Name</label>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <input type="hidden" id="roles" name="roles" class="form-control" value=@Json.Serialize(user.Roles.ToArray()) />
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Save changes</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         @if (user.Roles.Contains("UnapprovedUser"))
                         {
                             <a asp-action="ApproveUser" asp-route-id="@user.UserId" asp-route-roles="User" class="btn btn-primary btn-sm">Approve User</a>
@@ -37,3 +75,45 @@
         </tbody>
     </table>
 </div>
+@section Scripts {
+
+    <script>
+        $(document).ready(function () {
+            $('.role-input').change(
+                function () {
+                    let role = $(this).val();
+                    if ($(this).is(':checked')) {
+                        updateRoles(role);
+                    } else {
+                        deleteRole(role);
+                    }
+                });
+
+            function updateRoles(newRole) {
+                let rolesArray;
+                try {
+                    rolesArray = JSON.parse($('#roles').val());
+                    console.log(rolesArray, 'is roles')
+                } catch (e) {
+                    rolesArray = [];
+                }
+                rolesArray.push(newRole);
+                $('#roles').val(JSON.stringify(rolesArray));
+                console.log("Roles Updated: ", $('#roles').val());
+            }
+
+            function deleteRole(roleToDelete) {
+                let rolesArray;
+                try {
+                    rolesArray = JSON.parse($('#roles').val());
+                    console.log(rolesArray, 'is roles')
+                } catch (e) {
+                    rolesArray = [];
+                }
+                const roles = rolesArray.filter((role) => role !== roleToDelete);
+                $('#roles').val(JSON.stringify(roles));
+                console.log("Roles Updated: ", $('#roles').val());
+            }
+        });
+    </script>
+}
