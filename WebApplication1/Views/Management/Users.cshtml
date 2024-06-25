@@ -2,6 +2,7 @@
 @{
     var roles = ViewBag.Roles as List<Microsoft.AspNetCore.Identity.IdentityRole>;
     ViewBag.Roles = roles;
+    var currentUserRoles = ViewBag.currentUserRoles;
 }
 <div class="container mt-5">
     <h1>Users</h1>
@@ -28,6 +29,8 @@
                             }
                         </small>
                     </td>
+                    @if ( currentUserRoles.Contains("Admin"))
+                    {
                     <td>
                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modifyRolesModal-@user.UserId">
                             Modify Roles
@@ -70,6 +73,8 @@
                             <a asp-action="ApproveUser" asp-route-id="@user.UserId" asp-route-roles="User" class="btn btn-primary btn-sm">Approve User</a>
                         }
                     </td>
+                    }
+
                 </tr>
             }
         </tbody>

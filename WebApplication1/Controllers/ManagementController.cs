@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyRecipes.Data;
@@ -7,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace MyRecipes.Controllers
 {
-
+    [Authorize(Roles ="Admin, Manager")]
     public class ManagementController : Controller
     {
         private readonly AppDbContext _context;
@@ -26,6 +27,8 @@ namespace MyRecipes.Controllers
         }
         public async Task<IActionResult> Users()
         {
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+            ViewBag.currentUserRoles = await _userManager.GetRolesAsync(currentUser);
             var allRoles = await _roleManager.Roles.ToListAsync();
             ViewBag.Roles = allRoles;
 
@@ -80,7 +83,8 @@ namespace MyRecipes.Controllers
 
             return BadRequest("User not found.");
         }
-        
+        [Authorize(Roles = "Admin")]
+
         [HttpPost]
         public async Task<IActionResult> ModifyUserRoles()
         {

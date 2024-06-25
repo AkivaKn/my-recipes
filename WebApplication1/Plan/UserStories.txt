@@ -17,10 +17,10 @@ Admin user can delete any recipe
 User can see username of recipe poster
 User can only edit their own recipe
 Admin user can edit any recipe
-User cannot modify roles
-Management user can only approve a regular user
 User can see an edit button on their own recipe
 Admin user can see an edit button on any recipe
+User cannot modify roles
+Management user can only approve a regular user
 User can see ingredients in the same order it was posted
 User can edit order of ingredients/instructions in create dish form
 User can edit added ingredients/instructions in create dish form
