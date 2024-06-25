@@ -277,12 +277,14 @@ namespace MyRecipes.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? id)
         {
+            var currentUserId = _userManager.GetUserId(HttpContext.User);
+
             if (id == null)
             {
                 return NotFound();
             }
             var dish = await _context.Dishes.FindAsync(id);
-            if (dish != null)
+            if (dish != null && currentUserId == dish.UserId)
             {
                 _context.Dishes.Remove(dish);
             }
