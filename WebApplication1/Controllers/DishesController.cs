@@ -258,7 +258,10 @@ namespace MyRecipes.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            ViewBag.currentUserId = _userManager.GetUserId(HttpContext.User);
+            var currentUserId = _userManager.GetUserId(HttpContext.User);
+            ViewBag.currentUserId = currentUserId;
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+            ViewBag.currentUserRoles = await _userManager.GetRolesAsync(currentUser);
             var dishDetails = await _context.Dishes
                 .Include(d => d.User)
              .Include(d => d.DishCategories)
@@ -278,13 +281,14 @@ namespace MyRecipes.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             var currentUserId = _userManager.GetUserId(HttpContext.User);
-
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+            var currentUserRoles = await _userManager.GetRolesAsync(currentUser);
             if (id == null)
             {
                 return NotFound();
             }
             var dish = await _context.Dishes.FindAsync(id);
-            if (dish != null && currentUserId == dish.UserId)
+            if (dish != null && currentUserId == dish.UserId || currentUserRoles.Contains("Admin"))
             {
                 _context.Dishes.Remove(dish);
             }

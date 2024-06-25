@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = Model.DishName;
     var currentUserId = ViewBag.currentUserId;
+    var currentUserRoles = ViewBag.currentUserRoles;
 }
 
 <div class="container mt-5">
@@ -81,7 +82,7 @@
                         <p>@Model.Notes</p>
                     }
                 </div>
-                @if(currentUserId == Model.UserId)
+                @if(currentUserId == Model.UserId || currentUserRoles.Contains("Admin"))
                 {
                 <div class="col-md-6">
                     <button type="button" class="btn btn-danger col-md-6" data-bs-toggle="modal" data-bs-target="#deleteModal">
