@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyRecipes.Data;
 using MyRecipes.Models;
@@ -6,6 +7,8 @@ using Newtonsoft.Json;
 
 namespace MyRecipes.Controllers
 {
+    [Authorize(Roles = "User,Manager,Admin")]
+
     public class DishesController : Controller
     {
         private readonly AppDbContext _context;
