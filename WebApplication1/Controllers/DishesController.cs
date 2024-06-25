@@ -133,6 +133,9 @@ namespace MyRecipes.Controllers
         }
         public async Task<IActionResult> Edit(int id)
         {
+            var currentUserId = _userManager.GetUserId(HttpContext.User);
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+            var currentUserRoles = await _userManager.GetRolesAsync(currentUser);
             var units = await _context.Units.ToListAsync();
             ViewBag.Units = units;
             var categories = await _context.Categories.ToListAsync();
@@ -147,13 +150,19 @@ namespace MyRecipes.Controllers
              .ThenInclude(r => r.Ingredients)
                  .ThenInclude(i => i.Unit)
          .FirstOrDefaultAsync(d => d.Id == id);
-            if (dishDetails == null) return View("Empty");
+            if (dishDetails != null && currentUserId == dishDetails.UserId || currentUserRoles.Contains("Admin"))
+            {
             return View(dishDetails);
+            }
+           return View("Empty");
         }
         [HttpPost]
         [ActionName("Edit")]
         public async Task<IActionResult> EditPost(int id)
         {
+            var currentUserId = _userManager.GetUserId(HttpContext.User);
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+            var currentUserRoles = await _userManager.GetRolesAsync(currentUser);
             var dishToUpdate = await _context.Dishes
                 .Include(d => d.DishCategories)
                 .Include(d => d.Instructions)
@@ -165,7 +174,10 @@ namespace MyRecipes.Controllers
             {
                 return NotFound();
             }
-
+            if (currentUserId != dishToUpdate.UserId && !currentUserRoles.Contains("Admin"))
+            {
+                return RedirectToAction("Details", "Dishes", new { id = id });
+            }
             var dishName = Request.Form["DishName"];
             var dishDescription = Request.Form["DishDescription"];
             var servings = int.Parse(Request.Form["Servings"]);
