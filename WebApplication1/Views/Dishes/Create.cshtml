@@ -212,7 +212,7 @@
                 $('.ingredient').on("click", function () {
                     editCurrentInputField($(this));
                 })
-               
+
             });
             $('#new-ingredients').keypress(function (e) {
                 if (e.which === 13) {
@@ -226,9 +226,9 @@
                 $('#add-ingredients').click();
                 var ingredientsList = $('#section-input .ingredients-list').clone();
                 $('#recipes-list').append(`<li class="section">
-                         <h5 class="section-title">${sectionTitle}</h5>
-                                  <ul class="ingredients-list">${ingredientsList.html()}</ul>
-                         </li>`);
+                                         <h5 class="section-title">${sectionTitle}</h5>
+                                                  <ul class="ingredients-list">${ingredientsList.html()}</ul>
+                                         </li>`);
                 $(function () {
                     $(".ingredients-list").sortable();
                 });
@@ -241,9 +241,22 @@
                     editCurrentInputField($(this));
                 })
             });
+            function convertAsciiToNumber(char) {
+                switch (char) {
+                    case 188:
+                        return '.25';
+                    case 189:
+                        return '.5';
+                    case 190:
+                        return '.75';
+                    default:
+                        return 'unknown';
+                }
 
+            }
             function convertIngredientsToIngredientModel() {
                 $('.ingredient').each(function () {
+                    var asciiLookup = [188, 189, 190];
                     var ingredientValue = $(this).text();
                     var ingredientNumber = $(this).index();
                     let words = ingredientValue.split(' ');
@@ -251,15 +264,40 @@
                     let IngredientName;
                     let UnitId;
                     let UnitName;
-                    if (!isNaN(parseFloat(words[0]))) {
-                        Quantity = parseFloat(words.shift());
+                    var firstWordCharacters = words[0].split('');
+
+                    var firstWordNumericCharacters = [];
+                    for (const char of firstWordCharacters) {
+                        if (!isNaN(parseInt(char))) {
+                            firstWordNumericCharacters.push(char);
+                        } else if (asciiLookup.includes(char.charCodeAt(0))) {
+                            var convertedChar = convertAsciiToNumber(char.charCodeAt(0));
+                            firstWordNumericCharacters.push(convertedChar);
+                        } else {
+                            break;
+                        }
+                    }
+                    
+                    if (firstWordNumericCharacters.length > 0) {
+                        firstWordCharacters = firstWordCharacters.slice(firstWordNumericCharacters.length);
+                        if(firstWordCharacters.length == 0 && asciiLookup.includes(words[1].charCodeAt(0))){
+                        var convertedChar = convertAsciiToNumber(words[1].charCodeAt(0));
+                            firstWordNumericCharacters.push(convertedChar);
+                        }
+                        words.shift()
+                        Quantity = parseFloat(firstWordNumericCharacters.join(''));
                         IngredientName = words.join(' ');
+
                     } else {
                         IngredientName = ingredientValue;
                     }
-                    words = IngredientName.split(' ');
+                    if (firstWordCharacters.length > 0) {
+                        words[0] = firstWordCharacters.join('');
+                    } 
 
+                    words = IngredientName.split(' ');
                     for (var i = 0; i < units.length; i++) {
+                        console.log(words)
                         if (words[0] === units[i].unitName || words[0] === units[i].pluralName) {
                             UnitId = units[i].id;
                             UnitName = words[0];
@@ -270,14 +308,18 @@
                     var newIngredient = {
                         Quantity: Quantity || null,
                         IngredientName: IngredientName || "",
-                        ingredientNumber: ingredientNumber || 0,
+                        IngredientNumber: ingredientNumber || 0,
                         UnitId: UnitId || null,
                         UnitName: UnitName || ""
-                    };
-                    console.log(newIngredient, 'is the new ingredient')
+                    }
                     $(this).text(JSON.stringify(newIngredient));
                 })
             }
+
+
+
+
+
             function updateSectionInput() {
                 var sectionsArray = [];
                 $('.section').each(function () {
