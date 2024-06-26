@@ -10,6 +10,7 @@ namespace MyRecipes.Models
         [Key]
         public int Id { get; set; }
         public string IngredientName { get; set; }
+        public int IngredientNumber { get; set; }
         public int RecipeId { get; set; }
         [ForeignKey("RecipeId")]
         [JsonIgnore]

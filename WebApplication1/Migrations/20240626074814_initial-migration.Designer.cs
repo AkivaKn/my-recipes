@@ -12,8 +12,8 @@ using MyRecipes.Data;
 namespace MyRecipes.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240625155706_application-user")]
-    partial class applicationuser
+    [Migration("20240626074814_initial-migration")]
+    partial class initialmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -301,6 +301,9 @@ namespace MyRecipes.Migrations
                     b.Property<string>("IngredientName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IngredientNumber")
+                        .HasColumnType("int");
 
                     b.Property<double?>("Quantity")
                         .HasColumnType("float");

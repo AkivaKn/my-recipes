@@ -299,6 +299,9 @@ namespace MyRecipes.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("IngredientNumber")
+                        .HasColumnType("int");
+
                     b.Property<double?>("Quantity")
                         .HasColumnType("float");
 

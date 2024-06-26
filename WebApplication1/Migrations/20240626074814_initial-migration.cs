@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MyRecipes.Migrations
 {
     /// <inheritdoc />
-    public partial class initial_migration : Migration
+    public partial class initialmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -213,10 +213,10 @@ namespace MyRecipes.Migrations
                 {
                     table.PrimaryKey("PK_Dishes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Dishes_User_UserId",
+                        name: "FK_Dishes_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "UserId");
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -291,6 +291,7 @@ namespace MyRecipes.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IngredientName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IngredientNumber = table.Column<int>(type: "int", nullable: false),
                     RecipeId = table.Column<int>(type: "int", nullable: false),
                     UnitId = table.Column<int>(type: "int", nullable: true),
                     Quantity = table.Column<double>(type: "float", nullable: true)
@@ -409,10 +410,10 @@ namespace MyRecipes.Migrations
                 name: "Instructions");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "User");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Categories");
@@ -427,7 +428,7 @@ namespace MyRecipes.Migrations
                 name: "Dishes");
 
             migrationBuilder.DropTable(
-                name: "User");
+                name: "AspNetUsers");
         }
     }
 }

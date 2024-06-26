@@ -261,12 +261,14 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "large egg",
+                            IngredientNumber = 1,
                             RecipeId = 1,
                             Quantity = 4
                         },
                         new Ingredient()
                         {
                             IngredientName = "milk",
+                            IngredientNumber = 2,
                              RecipeId = 1,
                             UnitId = 1,
                             Quantity = 1.25,
@@ -274,6 +276,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "sour cream",
+                            IngredientNumber = 3,
                             RecipeId = 1,
                             UnitId = 2,
                             Quantity = 2,
@@ -281,6 +284,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "melted butter",
+                            IngredientNumber = 4,
                             RecipeId = 1,
                             UnitId = 1,
                             Quantity = 0.25,
@@ -288,6 +292,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "vanilla extract",
+                            IngredientNumber = 5,
                             RecipeId = 1,
                             UnitId = 3,
                             Quantity = 0.75,
@@ -295,6 +300,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "flour",
+                            IngredientNumber = 6,
                             RecipeId = 1,
                             UnitId = 1,
                             Quantity = 1.33,
@@ -302,6 +308,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "sugar",
+                            IngredientNumber = 7,
                             RecipeId = 1,
                             UnitId = 2,
                             Quantity = 1.5,
@@ -309,6 +316,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "baking powder",
+                            IngredientNumber = 8,
                             RecipeId = 1,
                             UnitId = 3,
                             Quantity = 1.25,
@@ -316,6 +324,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "curd style farmer cheese",
+                            IngredientNumber = 1,
                             RecipeId = 2,
                             UnitId = 4,
                             Quantity = 225,
@@ -323,6 +332,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "ricotta cheese",
+                            IngredientNumber = 2,
                             RecipeId = 2,
                             UnitId = 4,
                             Quantity = 450,
@@ -330,12 +340,14 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "large egg",
+                            IngredientNumber = 3,
                              RecipeId = 2,
                             Quantity = 2,
                         },
                          new Ingredient()
                         {
                             IngredientName = "sugar",
+                            IngredientNumber = 4,
                             RecipeId = 2,
                             UnitId = 2,
                             Quantity = 2.5,
@@ -343,6 +355,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "lemon juice",
+                            IngredientNumber = 5,
                             RecipeId = 2,
                             UnitId = 2,
                             Quantity = 2,
@@ -350,26 +363,31 @@ namespace MyRecipes.Data
                          new Ingredient()
                         {
                             IngredientName = "sour cream",
+                            IngredientNumber = 1,
                             RecipeId = 3,
                         },
                         new Ingredient()
                         {
                             IngredientName = "plain/vanilla yoghurt",
+                            IngredientNumber = 2,
                             RecipeId = 3,
                         },
                         new Ingredient()
                         {
                             IngredientName = "applesauce",
+                            IngredientNumber = 3,
                             RecipeId = 3,
                         },
                         new Ingredient()
                         {
                             IngredientName = "sliced fresh strawberries or other fruit",
+                            IngredientNumber = 4,
                             RecipeId = 3,
                         },
                         new Ingredient()
                         {
                             IngredientName = "flour",
+                            IngredientNumber = 1,
                             RecipeId = 4,
                             UnitId = 1,
                             Quantity = 3,
@@ -377,6 +395,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "baking powder",
+                            IngredientNumber = 2,
                             RecipeId = 4,
                             UnitId = 3,
                             Quantity = 1,
@@ -384,6 +403,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "margarine",
+                            IngredientNumber = 3,
                             RecipeId = 4,
                             UnitId = 5,
                             Quantity = 3,
@@ -391,12 +411,14 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "egg yolks",
+                            IngredientNumber = 4,
                              RecipeId = 4,
                             Quantity = 2,
                         },
                         new Ingredient()
                         {
                             IngredientName = "water",
+                            IngredientNumber = 5,
                             RecipeId = 4,
                             UnitId = 1,
                             Quantity = 0.33,
@@ -404,6 +426,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "sugar",
+                            IngredientNumber = 6,
                              RecipeId = 4,
                             UnitId = 2,
                             Quantity = 2,
@@ -411,6 +434,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "salt",
+                            IngredientNumber = 7,
                              RecipeId = 4,
                             UnitId = 3,
                             Quantity = 0.5,
@@ -418,6 +442,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "chocolate",
+                            IngredientNumber = 1,
                               RecipeId = 5,
                             UnitId = 6,
                             Quantity = 8,
@@ -425,6 +450,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "sugar",
+                            IngredientNumber = 2,
                              RecipeId = 5,
                             UnitId = 1,
                             Quantity = 2,
@@ -432,6 +458,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "cocoa",
+                            IngredientNumber = 3,
                              RecipeId = 5,
                             UnitId = 2,
                             Quantity = 2,
@@ -439,6 +466,7 @@ namespace MyRecipes.Data
                          new Ingredient()
                         {
                             IngredientName = "water",
+                            IngredientNumber = 4,
                            RecipeId = 5,
                             UnitId = 1,
                             Quantity = 0.5,
@@ -446,6 +474,7 @@ namespace MyRecipes.Data
                           new Ingredient()
                         {
                             IngredientName = "margarine",
+                            IngredientNumber = 5,
                              RecipeId = 5,
                             UnitId = 5,
                             Quantity = 1,
@@ -453,18 +482,21 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "separated egg",
+                            IngredientNumber = 6,
                               RecipeId = 5,
                             Quantity = 7,
                         },
                          new Ingredient()
                         {
                             IngredientName = "egg yolks",
+                            IngredientNumber = 7,
                                RecipeId = 5,
                             Quantity = 5,
                         },
                           new Ingredient()
                         {
                             IngredientName = "flour",
+                            IngredientNumber = 8,
                              RecipeId = 5,
                             UnitId = 2,
                             Quantity = 5,
@@ -472,6 +504,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "baking powder",
+                            IngredientNumber = 9,
                              RecipeId = 5,
                             UnitId = 3,
                             Quantity = 1.5,
@@ -479,6 +512,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "bakers choice custard",
+                            IngredientNumber = 10,
                              RecipeId = 5,
                             UnitId = 6,
                             Quantity = 12,
@@ -486,6 +520,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "flaky dough",
+                            IngredientNumber = 11,
                              RecipeId = 5,
                             UnitId = 7,
                             Quantity = 2,
@@ -493,6 +528,7 @@ namespace MyRecipes.Data
                         new Ingredient()
                         {
                             IngredientName = "confectioner's sugar",
+                            IngredientNumber = 12,
                              RecipeId = 5,
                         }
 
