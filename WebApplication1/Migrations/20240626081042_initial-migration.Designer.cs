@@ -12,7 +12,7 @@ using MyRecipes.Data;
 namespace MyRecipes.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240626074814_initial-migration")]
+    [Migration("20240626081042_initial-migration")]
     partial class initialmigration
     {
         /// <inheritdoc />

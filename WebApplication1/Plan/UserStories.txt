@@ -25,6 +25,7 @@ User can see ingredients in the same order it was posted
 User can edit order of ingredients/instructions in create dish form
 User can edit added ingredients/instructions in create dish form
 User can paste ASCII characters of fractions when adding ingredients
+User can add ingredient with alternative spellings of unit
 Admin user can add categories
 Admin user can add units
 User can add comment to recipe

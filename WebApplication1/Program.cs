@@ -24,6 +24,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAuthorization(options =>
 {
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
         .RequireRole("Admin","Manager","User")
         .Build();
 });
@@ -75,6 +76,7 @@ using (var scope = app.Services.CreateScope())
         await userManager.AddToRoleAsync(user, "Admin");
         await userManager.AddToRoleAsync(user, "User");
         await userManager.AddToRoleAsync(user, "Manager");
+        await userManager.RemoveFromRoleAsync(user, "UnapprovedUser");
     }
 }
 app.Run();

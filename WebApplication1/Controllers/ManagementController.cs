@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace MyRecipes.Controllers
 {
-    [Authorize(Roles ="Admin, Manager")]
+    [Authorize(Roles = "Admin, Manager")]
     public class ManagementController : Controller
     {
         private readonly AppDbContext _context;
@@ -28,8 +28,10 @@ namespace MyRecipes.Controllers
         public async Task<IActionResult> Users()
         {
             var currentUser = await _userManager.GetUserAsync(HttpContext.User);
-            ViewBag.currentUserRoles = await _userManager.GetRolesAsync(currentUser);
+            var currentUserRoles = await _userManager.GetRolesAsync(currentUser);
+            ViewBag.currentUserRoles = currentUserRoles;
             var allRoles = await _roleManager.Roles.ToListAsync();
+            Console.WriteLine($"{currentUserRoles} is this users roles");
             ViewBag.Roles = allRoles;
 
             var users = await _userManager.Users.ToListAsync();

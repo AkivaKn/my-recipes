@@ -278,13 +278,14 @@ namespace MyRecipes.Controllers
                 .Include(d => d.User)
              .Include(d => d.DishCategories)
              .ThenInclude(dc => dc.Category)
-         .Include(d => d.Instructions)
+         .Include(d => d.Instructions.OrderBy(i => i.InstructionNumber))
+         //.Include(d => d.Recipes)
+         //        .ThenInclude(r => r.Ingredients)
          .Include(d => d.Recipes)
-                 .ThenInclude(r => r.Ingredients)
-         .Include(d => d.Recipes)
-             .ThenInclude(r => r.Ingredients)
+             .ThenInclude(r => r.Ingredients.OrderBy(i => i.IngredientNumber))
                  .ThenInclude(i => i.Unit)
          .FirstOrDefaultAsync(d => d.Id == id);
+            
             if (dishDetails == null) return View("Empty");
             return View(dishDetails);
         }
