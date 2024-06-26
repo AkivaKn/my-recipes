@@ -5,78 +5,87 @@
     var categories = ViewBag.Categories as List<Category>;
 }
 
-<div class="row text">
-    <div class="col-md-8 offset-2">
-        <h1>Add a New Recipe</h1>
-        <div class="row">
-            <div class="col-md-8 offset-2">
-                <form asp-action="Create" method="post" id="recipeForm">
-                    <div class="form-group">
-                        <label for="DishName">Dish Name</label>
-                        <input type="text" id="DishName" name="DishName" class="form-control" />
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Choose categories
-                        </button>
-                        <ul class="dropdown-menu">
-                            @foreach (var category in categories)
-                            {
-                                
-                            <li>
-                                <div class="form-check">
-                                    <input class="form-check-input category-input" type="checkbox" value=@category.Id id=@category.CategoryName >
-                                    <label class="form-check-label" for=@category.CategoryName>
-                                        @category.CategoryName
-                                    </label>
-                                </div>
-                            </li>
-                            }
-                            
-                        </ul>
-                    </div>
-                    <input type="hidden" id="categories" name="categories" class="form-control" value="[]" />
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">Add a New Recipe</h2>
 
-                    <div class="form-group">
-                        <label for="DishDescription">Dish Description</label>
-                        <textarea id="DishDescription" name="DishDescription" class="form-control"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="Servings">Servings</label>
-                        <input type="number" id="Servings" name="Servings" class="form-control" value="1"/>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="Notes">Notes</label>
-                        <textarea id="Notes" name="Notes" class="form-control"></textarea>
-                    </div>
-
-                    <div class="form-group" id="recipe-list">
-                        <label>Recipe Sections:</label>
-                        <ul id="recipe-ul"></ul>
-                        <input type="text" id="new-section-title" name="new-section-title" class="form-control" placeholder="Enter title" />
-                        <div class="form-group" id="ingredients-list">
-                            <ul id="ingredients-ul"></ul>
-                            <textarea id="new-ingredients" name="new-ingredients" class="form-control" placeholder="Enter one or multiple ingredients and press Enter" ></textarea>
-                            <button type="button" id="add-ingredients" class="btn btn-primary">Add Ingredients</button>
-                            <input type="hidden" id="ingredients" name="ingredients" class="form-control" value="[]" />
+            <form asp-action="Create" method="post" id="recipeForm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="DishName">Dish Name</label>
+                            <input type="text" id="DishName" name="DishName" class="form-control" />
                         </div>
-                        <input type="hidden" id="sections" name="sections" value="[]" />
-                        <button type="button" id="add-section" class="btn btn-primary">Add Section</button>
+                        <div class="form-group">
+                            <label for="DishDescription">Dish Description</label>
+                            <textarea id="DishDescription" name="DishDescription" class="form-control"></textarea>
+                        </div>
                     </div>
+                    <div class="col-md-6">
+                        <label for="category-dropdown" class="form-check-label">Categories</label>
+                        <div class="dropdown" id="category-dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Choose categories
+                            </button>
+                            <ul class="dropdown-menu">
+                                @foreach (var category in categories)
+                                {
 
-                    <div class="form-group" id="instructions-list">
-                        <label>Instructions:</label>
-                        <ul id="instruction-ul"></ul>
-                        <textarea id="new-instructions" name="new-instructions" class="form-control" placeholder="Enter one or multiple instructions and press Enter"></textarea>
-                        <button type="button" id="add-instructions" class="btn btn-primary">Add Instructions</button>
-                        <input type="hidden" id="instructions" name="instructions" />
+                                    <li>
+                                        <div class="form-check">
+                                            <input class="form-check-input category-input" type="checkbox" value=@category.Id id=@category.CategoryName>
+                                            <label class="form-check-label" for=@category.CategoryName>
+                                                @category.CategoryName
+                                            </label>
+                                        </div>
+                                    </li>
+                                }
+
+                            </ul>
+                        </div>
+                        <input type="hidden" id="categories" name="categories" class="form-control" value="[]" />
+                        <div class="form-group">
+                            <label for="Servings">Servings</label>
+                            <input type="number" id="Servings" name="Servings" class="form-control" value="1" />
+                        </div>
                     </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group" id="recipe-list">
+                            <label>Sections:</label>
+                            <ul id="recipe-ul"></ul>
+                            <label for="new-section-title">Title</label>
+                            <input type="text" id="new-section-title" name="new-section-title" class="form-control" placeholder="Enter title e.g. Dough" />
+                            <div class="form-group" id="ingredients-list">
+                                <ul id="ingredients-ul"></ul>
+                                <label for="new-ingredients">Ingredients</label>
+                                <textarea id="new-ingredients" name="new-ingredients" class="form-control" placeholder="Enter one or multiple ingredients and press Enter"></textarea>
+                                <button type="button" id="add-ingredients" class="btn btn-primary">Add Ingredients</button>
+                                <input type="hidden" id="ingredients" name="ingredients" class="form-control" value="[]" />
+                            </div>
+                            <input type="hidden" id="sections" name="sections" value="[]" />
+                            <button type="button" id="add-section" class="btn btn-primary">Add Section</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group" id="instructions-list">
+                            <label>Instructions:</label>
+                            <ul id="instruction-ul"></ul>
+                            <textarea id="new-instructions" name="new-instructions" class="form-control" placeholder="Enter one or multiple instructions and press Enter"></textarea>
+                            <button type="button" id="add-instructions" class="btn btn-primary">Add Instructions</button>
+                            <input type="hidden" id="instructions" name="instructions" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="Notes">Notes</label>
+                    <textarea id="Notes" name="Notes" class="form-control"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Create Dish</button>
+            </form>
 
-                    <button type="submit" class="btn btn-success">Create Dish</button>
-                </form>
-            </div>
         </div>
     </div>
 </div>
@@ -104,8 +113,7 @@
                         }
                         updateCategories(newCategory)
                     }
-                    else 
-                    {
+                    else {
                         deleteCategory(CategoryId)
                     }
                 });
@@ -120,8 +128,8 @@
                 $('#categories').val(JSON.stringify(categoriesArray));
                 console.log("Categories Updated: ", $('#categories').val());
             }
-            function deleteCategory(categoryId){
-               let categoriesArray;
+            function deleteCategory(categoryId) {
+                let categoriesArray;
                 try {
                     categoriesArray = JSON.parse($('#categories').val());
                 } catch (e) {
@@ -138,11 +146,11 @@
                 if (sectionTitle.trim() !== '' && ingredients !== '[]') {
                     var parsedIngredients = JSON.parse(ingredients);
                     $('#recipe-ul').append(`<li>
-                                                        <h5>${sectionTitle}</h5>
-                                                        <ul>
-                                                            ${parsedIngredients.map(ingredient => `<li>${ingredient.Quantity ? ingredient.Quantity + ' ' : ''}${ingredient.IngredientName}</li>`).join('')}
-                                                        </ul>
-                                                    </li>`);
+                                                                <h5>${sectionTitle}</h5>
+                                                                <ul>
+                                                                    ${parsedIngredients.map(ingredient => `<li>${ingredient.Quantity ? ingredient.Quantity + ' ' : ''}${ingredient.IngredientName}</li>`).join('')}
+                                                                </ul>
+                                                            </li>`);
                     var newSection = {
                         RecipeName: sectionTitle,
                         Ingredients: parsedIngredients
@@ -177,31 +185,31 @@
                         let UnitId;
                         let UnitName;
                         if (!isNaN(parseFloat(words[0]))) {
-                        Quantity = parseFloat(words.shift());
-                        IngredientName = words.join(' ');
-                    } else {
-                        IngredientName = ingredient;
-                    }
-                    words = IngredientName.split(' ');
-
-                    for (var i = 0; i < units.length; i++) {
-                        if (words[0] === units[i].unitName || words[0] === units[i].pluralName) {
-                            UnitId = units[i].id;
-                            UnitName = words[0];
-                            IngredientName = words.slice(1).join(' ');
-                            break;
+                            Quantity = parseFloat(words.shift());
+                            IngredientName = words.join(' ');
+                        } else {
+                            IngredientName = ingredient;
                         }
+                        words = IngredientName.split(' ');
+
+                        for (var i = 0; i < units.length; i++) {
+                            if (words[0] === units[i].unitName || words[0] === units[i].pluralName) {
+                                UnitId = units[i].id;
+                                UnitName = words[0];
+                                IngredientName = words.slice(1).join(' ');
+                                break;
+                            }
+                        }
+                        var newIngredient = {
+                            Quantity: Quantity || null,
+                            IngredientName: IngredientName || "",
+                            UnitId: UnitId || null,
+                            UnitName: UnitName || "",
+                        };
+                        $('#ingredients-ul').append('<li>' + (newIngredient.Quantity ? newIngredient.Quantity + ' ' : '') + (newIngredient.UnitName ? newIngredient.UnitName + ' ' : '') + newIngredient.IngredientName + '</li>');
+                        $('#new-ingredients').val('');
+                        updateIngredients(newIngredient);
                     }
-                    var newIngredient = {
-                        Quantity: Quantity || null,
-                        IngredientName: IngredientName || "",
-                        UnitId: UnitId || null,
-                        UnitName: UnitName || "",
-                    };
-                    $('#ingredients-ul').append('<li>' + (newIngredient.Quantity ? newIngredient.Quantity + ' ' : '') + (newIngredient.UnitName ? newIngredient.UnitName + ' ' : '') + newIngredient.IngredientName + '</li>');
-                $('#new-ingredients').val('');
-                    updateIngredients(newIngredient);
-                }
                 })
             });
 
@@ -227,13 +235,14 @@
             $('#add-instructions').click(function () {
                 var instructionData = $('#new-instructions').val();
                 var instructions = instructionData.split('\n');
-                instructions.forEach((instruction) => 
-               { if (instruction.trim() !== '') {
-                    $('#instruction-ul').append('<li>' + instruction + '</li>');
-                }}
+                instructions.forEach((instruction) => {
+                    if (instruction.trim() !== '') {
+                        $('#instruction-ul').append('<li>' + instruction + '</li>');
+                    }
+                }
                 )
-                    $('#new-instructions').val('');
-                    updateInstructions();
+                $('#new-instructions').val('');
+                updateInstructions();
             });
 
             $('#new-instructions').keypress(function (e) {
