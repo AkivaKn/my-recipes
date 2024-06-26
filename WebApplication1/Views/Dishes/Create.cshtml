@@ -94,6 +94,14 @@
         $(document).ready(function () {
             var units = @Html.Raw(Json.Serialize(ViewBag.Units));
 
+            $('#recipeForm').submit(function (e) {
+                $('#add-section').click();
+                convertIngredientsToIngredientModel();
+                updateSectionInput();
+                var formData = $(this).serializeArray();
+                updateInstructions();
+                console.log("Form Data: ", formData);
+            });
             $('input, textarea').keypress(function (e) {
                 if (e.which === 13) {
                     e.preventDefault();
@@ -108,7 +116,54 @@
             $(function () {
                 $("#instruction-ul").sortable();
             });
-
+            function editCurrentInputField(currentField) {
+                if (currentField.find('input').length > 0) {
+                    return;
+                }
+                var currentFieldText = currentField.html();
+                currentField.html('');
+                currentField.append(`<input type="text" value="${currentFieldText}" />`);
+                var input = currentField.find('input');
+                input.focus().select();
+                input.on('keypress', function (e) {
+                    if (e.which === 13) {
+                        e.preventDefault();
+                        updateInputField($(this));
+                    }
+                });
+                input.on('blur', function () {
+                    updateInputField($(this));
+                });
+            }
+            function updateInputField(input) {
+                var newValue = input.val();
+                var fieldItem = input.closest('.ingredient,.section-title');
+                fieldItem.html(newValue);
+            }
+            function editCurrentTextAreaField(currentField) {
+                if (currentField.find('textarea').length > 0) {
+                    return;
+                }
+                var currentFieldText = currentField.html();
+                currentField.html('');
+                currentField.append('<textarea>' + currentFieldText + '</textarea>');
+                var textarea = currentField.find('textarea');
+                textarea.focus().select();
+                textarea.on('keypress', function (e) {
+                    if (e.which === 13) {
+                        e.preventDefault();
+                        updateTextAreaField($(this));
+                    }
+                });
+                textarea.on('blur', function () {
+                    updateTextAreaField($(this));
+                });
+            }
+            function updateTextAreaField(textarea) {
+                var newValue = textarea.val();
+                var fieldItem = textarea.closest('.instruction');
+                fieldItem.html(newValue);
+            }
             $('.category-input').change(
                 function () {
                     let CategoryId = $(this).val();
@@ -144,7 +199,7 @@
                 $('#categories').val(JSON.stringify(filteredCategories));
                 console.log("Categories Updated: ", $('#categories').val());
             }
-            
+
             $('#add-ingredients').click(function () {
                 const ingredientData = $('#new-ingredients').val();
                 const ingredients = ingredientData.split('\n');
@@ -154,6 +209,10 @@
                         $('#new-ingredients').val('');
                     }
                 })
+                $('.ingredient').on("click", function () {
+                    editCurrentInputField($(this));
+                })
+               
             });
             $('#new-ingredients').keypress(function (e) {
                 if (e.which === 13) {
@@ -161,29 +220,28 @@
                     $('#add-ingredients').click();
                 }
             });
+
             $('#add-section').click(function () {
                 var sectionTitle = $('#new-section-title').val() || "Main";
                 $('#add-ingredients').click();
                 var ingredientsList = $('#section-input .ingredients-list').clone();
                 $('#recipes-list').append(`<li class="section">
-                 <h5 class="section-title">${sectionTitle}</h5>
-                          <ul class="ingredients-list">${ingredientsList.html()}</ul>
-                 </li>`);
+                         <h5 class="section-title">${sectionTitle}</h5>
+                                  <ul class="ingredients-list">${ingredientsList.html()}</ul>
+                         </li>`);
                 $(function () {
                     $(".ingredients-list").sortable();
                 });
                 $('#new-section-title').val('');
                 $('#section-input .ingredients-list').empty();
+                $('.ingredient').on("click", function () {
+                    editCurrentInputField($(this));
+                })
+                $('.section-title').on("click", function () {
+                    editCurrentInputField($(this));
+                })
             });
-           
-            $('#recipeForm').submit(function (e) {
-                $('#add-section').click();
-                convertIngredientsToIngredientModel();
-                updateSectionInput();
-                var formData = $(this).serializeArray();
-                updateInstructions();
-                console.log("Form Data: ", formData);
-            });
+
             function convertIngredientsToIngredientModel() {
                 $('.ingredient').each(function () {
                     var ingredientValue = $(this).text();
@@ -246,11 +304,14 @@
                 var instructions = instructionData.split('\n');
                 instructions.forEach((instruction) => {
                     if (instruction.trim() !== '') {
-                        $('#instruction-ul').append('<li>' + instruction + '</li>');
+                        $('#instruction-ul').append('<li class="instruction">' + instruction + '</li>');
                     }
                 }
                 )
                 $('#new-instructions').val('');
+                $('.instruction').on("click", function () {
+                    editCurrentTextAreaField($(this));
+                })
             });
 
             $('#new-instructions').keypress(function (e) {

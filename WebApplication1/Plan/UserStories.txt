@@ -23,7 +23,7 @@ User cannot modify roles
 Management user can only approve a regular user
 User can see ingredients in the same order it was posted
 User can edit order of ingredients/instructions in create dish form
-User can edit added ingredients/instructions in create dish form
+User can edit added title/ingredients/instructions in create dish form
 User can paste ASCII characters of fractions when adding ingredients in create dish form
 User can add ingredient with alternative spellings of unit in create dish form
 User can edit order of ingredients/instructions in edit dish form 
