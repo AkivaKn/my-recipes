@@ -63,7 +63,6 @@
                                 <label for="new-ingredients">Ingredients</label>
                                 <textarea id="new-ingredients" name="new-ingredients" class="form-control" placeholder="Enter one or multiple ingredients and press Enter"></textarea>
                                 <button type="button" id="add-ingredients" class="btn btn-primary">Add Ingredients</button>
-                                @* <input type="hidden" id="ingredients" name="ingredients" class="form-control" value="[]" /> *@
                             </div>
                             <input type="hidden" id="sections" name="sections" value="[]" />
                             <button type="button" id="add-section" class="btn btn-primary">Add Section</button>
@@ -103,6 +102,12 @@
                     $('input, textarea').eq(index + 1).focus();
                 }
             });
+            $(function () {
+                $(".ingredients-list").sortable();
+            });
+            $(function () {
+                $("#instruction-ul").sortable();
+            });
 
             $('.category-input').change(
                 function () {
@@ -139,7 +144,7 @@
                 $('#categories').val(JSON.stringify(filteredCategories));
                 console.log("Categories Updated: ", $('#categories').val());
             }
-
+            
             $('#add-ingredients').click(function () {
                 const ingredientData = $('#new-ingredients').val();
                 const ingredients = ingredientData.split('\n');
@@ -164,16 +169,19 @@
                  <h5 class="section-title">${sectionTitle}</h5>
                           <ul class="ingredients-list">${ingredientsList.html()}</ul>
                  </li>`);
-
+                $(function () {
+                    $(".ingredients-list").sortable();
+                });
                 $('#new-section-title').val('');
                 $('#section-input .ingredients-list').empty();
             });
-
+           
             $('#recipeForm').submit(function (e) {
                 $('#add-section').click();
                 convertIngredientsToIngredientModel();
                 updateSectionInput();
                 var formData = $(this).serializeArray();
+                updateInstructions();
                 console.log("Form Data: ", formData);
             });
             function convertIngredientsToIngredientModel() {
@@ -243,7 +251,6 @@
                 }
                 )
                 $('#new-instructions').val('');
-                updateInstructions();
             });
 
             $('#new-instructions').keypress(function (e) {
