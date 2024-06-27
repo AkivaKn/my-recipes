@@ -223,9 +223,7 @@
                         IngredientName = words.join(' ');
                         console.log(units.length,'is unit length')
                         for (var i = 0; i < units.length; i++) {
-                            console.log(units[i].unitName)
-
-                            if (words[0] === units[i].unitName || words[0] === units[i].pluralName) {
+                            if (words[0] === units[i].unitName || words[0] === units[i].pluralName || units[i].alternativeSpellings?.includes(words[0])) {
                                 UnitId = units[i].id;
                                 UnitName = words[0];
                                 IngredientName = words.slice(1).join(' ');

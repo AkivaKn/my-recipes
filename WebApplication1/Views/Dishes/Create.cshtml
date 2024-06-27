@@ -93,7 +93,6 @@
     <script>
         $(document).ready(function () {
             var units = @Html.Raw(Json.Serialize(ViewBag.Units));
-
             $('#recipeForm').submit(function (e) {
                 $('#add-section').click();
                 convertIngredientsToIngredientModel();
@@ -297,8 +296,7 @@
 
                     words = IngredientName.split(' ');
                     for (var i = 0; i < units.length; i++) {
-                        console.log(words)
-                        if (words[0] === units[i].unitName || words[0] === units[i].pluralName) {
+                        if (words[0] === units[i].unitName || words[0] === units[i].pluralName || units[i].alternativeSpellings?.includes(words[0])) {
                             UnitId = units[i].id;
                             UnitName = words[0];
                             IngredientName = words.slice(1).join(' ');
