@@ -246,6 +246,7 @@ namespace MyRecipes.Controllers
                                 {
                                     IngredientName = newIngredient.IngredientName,
                                     RecipeId = recipe.Id,
+                                    IngredientNumber = newIngredient.IngredientNumber,
                                 };
 
                                 if (newIngredient.Unit.Id > 0)

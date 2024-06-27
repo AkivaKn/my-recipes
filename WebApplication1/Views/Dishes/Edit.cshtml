@@ -213,6 +213,7 @@
                     var ingredientText = $(this).val().trim();
                     if (ingredientText !== '') {
                         var words = ingredientText.split(' ');
+                        var ingredientNumber = $(this).index();
                         var Quantity;
                         var IngredientName;
                         var UnitId;
@@ -234,7 +235,8 @@
                         var newIngredient = {
                             Quantity: Quantity || null,
                             IngredientName: IngredientName || "",
-                            Unit: { Id: UnitId || null, UnitName: UnitName || "" }
+                            Unit: { Id: UnitId || null, UnitName: UnitName || "" },
+                            IngredientNumber: ingredientNumber || 0,
                         };
                         ingredientsArray.push(newIngredient);
                     }
