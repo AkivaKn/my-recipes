@@ -94,7 +94,6 @@
         $(document).ready(function () {
             var units = @Html.Raw(Json.Serialize(ViewBag.Units));
             $('#recipeForm').submit(function (e) {
-                e.preventDefault()
                 $('#add-section').click();
                 convertIngredientsToIngredientModel();
                 updateSectionInput();

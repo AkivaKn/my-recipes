@@ -11,7 +11,7 @@ using MyRecipes.Models;
 
 namespace MyRecipes.Controllers
 {
-    [Authorize(Roles = "Manager")]
+    [Authorize(Roles = "Admin")]
     public class CategoriesController : Controller
     {
         private readonly AppDbContext _context;

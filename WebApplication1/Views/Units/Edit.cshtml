@@ -1,0 +1,53 @@
+﻿@model MyRecipes.Models.Unit
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Unit</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" id="unitForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="UnitName" class="control-label"></label>
+                <input asp-for="UnitName" class="form-control" />
+                <span asp-validation-for="UnitName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PluralName" class="control-label"></label>
+                <input asp-for="PluralName" class="form-control" />
+                <span asp-validation-for="PluralName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AlternativeSpellings" class="control-label"></label>
+                <input asp-for="AlternativeSpellings" class="form-control" id="alternative-spellings-input"/>
+                <span asp-validation-for="AlternativeSpellings" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $('#unitForm').submit(function (e) {
+                var spellingsString = $('#alternative-spellings-input').val();
+                var spellings = spellingsString.split(',');
+                $('#alternative-spellings-input').val(JSON.stringify(spellings));
+            });
+        });
+    </script>
+}
