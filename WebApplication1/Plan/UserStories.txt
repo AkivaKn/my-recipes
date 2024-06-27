@@ -29,8 +29,8 @@ User can add ingredient with alternative spellings of unit in create dish form
 User can edit order of ingredients/instructions in edit dish form ?
 User can paste ASCII characters of fractions when adding ingredients in edit dish form
 User can add ingredient with alternative spellings of unit in edit dish form
-Admin user can add categories
-Admin user can add units
+Admin user can add/edit/delete categories
+Admin user can add/edit/delete units
 User can add comment to recipe
 User can delete their own comment
 User can edit their own comment

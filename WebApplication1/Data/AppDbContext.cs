@@ -19,6 +19,13 @@ namespace MyRecipes.Data
             });
             modelBuilder.Entity<DishCategory>().HasOne(d => d.Dish).WithMany(dc => dc.DishCategories).HasForeignKey(d => d.DishId);
             modelBuilder.Entity<DishCategory>().HasOne(c => c.Category).WithMany(dc => dc.DishCategories).HasForeignKey(d => d.CategoryId);
+            modelBuilder.Entity<DishCollection>().HasKey(dc => new
+            {
+                dc.DishId,
+                dc.CollectionId,
+            });
+            modelBuilder.Entity<DishCollection>().HasOne(d => d.Dish).WithMany(dc => dc.DishCollections).HasForeignKey(d => d.DishId);
+            modelBuilder.Entity<DishCollection>().HasOne(c => c.Collection).WithMany(dc => dc.DishCollections).HasForeignKey(d => d.CollectionId);
             base.OnModelCreating(modelBuilder);
         }
         public DbSet<Category> Categories { get; set; }
@@ -28,7 +35,9 @@ namespace MyRecipes.Data
         public DbSet<Instruction> Instructions { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Unit> Units { get; set; }
-        public DbSet<MyRecipes.Models.User> User { get; set; } = default!;
+        public DbSet<Comment> Comments { get; set; }
+
+        public DbSet<User> User { get; set; } = default!;
 
 
     }

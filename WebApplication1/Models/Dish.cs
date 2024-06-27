@@ -27,9 +27,12 @@ namespace MyRecipes.Models
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
         public List<DishCategory> DishCategories { get; set; }
+        public List<DishCollection> DishCollections { get; set; }
 
         [ValidateNever]
         public List<Instruction> Instructions { get; set; }
+        [ValidateNever]
+        public List<Comment> Comments { get; set; }
         [ValidateNever]
 
         public List<Recipe> Recipes { get; set; }
