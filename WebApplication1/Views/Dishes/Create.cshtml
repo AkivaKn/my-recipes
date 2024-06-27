@@ -94,6 +94,7 @@
         $(document).ready(function () {
             var units = @Html.Raw(Json.Serialize(ViewBag.Units));
             $('#recipeForm').submit(function (e) {
+                e.preventDefault()
                 $('#add-section').click();
                 convertIngredientsToIngredientModel();
                 updateSectionInput();
@@ -249,12 +250,29 @@
                     case 190:
                         return '.75';
                     default:
-                        return 'unknown';
+                        return null;
+                }
+            }
+            function convertFractionToNumber(word) {
+                switch (word) {
+                    case '1/4':
+                        return '.25';
+                    case '1/3':
+                        return '.33';
+                    case '1/2':
+                        return '.5';
+                    case '2/3':
+                        return '.67';
+                    case '3/4':
+                        return '.75';
+                    default:
+                        return null;
                 }
             }
             function convertIngredientsToIngredientModel() {
                 $('.ingredient').each(function () {
                     var asciiLookup = [188, 189, 190];
+                    var fractionLookup = ['1/4','1/3','1/2','2/3','3/4']
                     var ingredientValue = $(this).text();
                     var ingredientNumber = $(this).index();
                     let words = ingredientValue.split(' ');
@@ -265,33 +283,62 @@
                     var firstWordCharacters = words[0].split('');
 
                     var firstWordNumericCharacters = [];
-                    for (const char of firstWordCharacters) {
+                    var firstThreeCharacters = firstWordCharacters.slice(0, 3).join('');
+                    console.log(firstThreeCharacters,'first three')
+                    var j = 0;
+                    var k = 0;
+                    if (fractionLookup.includes(firstThreeCharacters)) {
+                        var characters = convertFractionToNumber(firstThreeCharacters).split('');
+                        characters.forEach((char) => {
+                        firstWordNumericCharacters.push(char);
+                        })
+                        j = 3;
+                        k = 3;
+                    }
+                    for (let i = j; i < firstWordCharacters.length;i++) {
+                        let char = firstWordCharacters[i];
                         if (!isNaN(parseInt(char))) {
                             firstWordNumericCharacters.push(char);
+                            k++;
                         } else if (asciiLookup.includes(char.charCodeAt(0))) {
                             var convertedChar = convertAsciiToNumber(char.charCodeAt(0));
                             firstWordNumericCharacters.push(convertedChar);
-                        } else {
+                            k++;
+                        }  else {
                             break;
                         }
                     }
-                    
                     if (firstWordNumericCharacters.length > 0) {
-                        firstWordCharacters = firstWordCharacters.slice(firstWordNumericCharacters.length);
-                        if(firstWordCharacters.length == 0 && asciiLookup.includes(words[1].charCodeAt(0))){
-                        var convertedChar = convertAsciiToNumber(words[1].charCodeAt(0));
+                        firstWordCharacters = firstWordCharacters.slice(k);
+                        console.log(firstWordCharacters,'is first word')
+                        if (firstWordCharacters.length === 0 && asciiLookup.includes(words[1].charCodeAt(0))) {
+                            var convertedChar = convertAsciiToNumber(words[1].charCodeAt(0));
                             firstWordNumericCharacters.push(convertedChar);
+                            if (words[1].length > 1) {
+                                words[1] = words[1].slice(1);
+                            } else {
+                            words.shift();
+                            }
+                        }  else if (firstWordCharacters.length == 0 && fractionLookup.includes(words[1])) {
+                            var convertedWord = convertFractionToNumber(words[1]);
+                            firstWordNumericCharacters.push(convertedWord);
+                            words.shift();
+                        } else if (firstWordCharacters.length == 0 && fractionLookup.includes(words[1].slice(0,3))) {
+                            var convertedWord = convertFractionToNumber(words[1].slice(0,3));
+                            firstWordNumericCharacters.push(convertedWord);
+                            words[1] = words[1].slice(3);
                         }
+                        if (firstWordCharacters.length > 0) {
+                            words[0] = firstWordCharacters.join('');
+                        } else {
                         words.shift()
+                        }
                         Quantity = parseFloat(firstWordNumericCharacters.join(''));
                         IngredientName = words.join(' ');
-
                     } else {
                         IngredientName = ingredientValue;
                     }
-                    if (firstWordCharacters.length > 0) {
-                        words[0] = firstWordCharacters.join('');
-                    } 
+                    
 
                     words = IngredientName.split(' ');
                     for (var i = 0; i < units.length; i++) {
