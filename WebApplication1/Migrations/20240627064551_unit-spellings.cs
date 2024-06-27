@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MyRecipes.Migrations
 {
     /// <inheritdoc />
-    public partial class initialmigration : Migration
+    public partial class unitspellings : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -70,7 +70,8 @@ namespace MyRecipes.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UnitName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PluralName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    PluralName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AlternativeSpellings = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

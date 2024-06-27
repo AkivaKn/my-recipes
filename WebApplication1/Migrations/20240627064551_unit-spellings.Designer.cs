@@ -12,8 +12,8 @@ using MyRecipes.Data;
 namespace MyRecipes.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240626081042_initial-migration")]
-    partial class initialmigration
+    [Migration("20240627064551_unit-spellings")]
+    partial class unitspellings
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -377,6 +377,9 @@ namespace MyRecipes.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AlternativeSpellings")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PluralName")
                         .IsRequired()

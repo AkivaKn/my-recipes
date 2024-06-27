@@ -8,6 +8,7 @@ namespace MyRecipes.Models
         public int Id { get; set; }
         public string UnitName { get; set; }
         public string PluralName { get; set; }
+        public List<string>? AlternativeSpellings { get; set; }
         public List<Ingredient> Ingredients { get; set; }
 
     }

@@ -203,18 +203,21 @@ namespace MyRecipes.Data
                         },
                         new Unit()
                         {
-                            UnitName = "Tbsp",
-                            PluralName = "Tbsp"
+                            UnitName = "tbsp",
+                            PluralName = "tbsp",
+                            AlternativeSpellings = ["T","Tbsp","TB", "tbs","Tablespoon","tablespoon"]
                         },
                         new Unit()
                         {
                             UnitName = "tsp",
-                            PluralName = "tsp"
+                            PluralName = "tsp",
+                            AlternativeSpellings = ["t","Tsp", "Teaspoon","teaspoon"]
                         },
                         new Unit()
                         {
                             UnitName = "gr",
-                            PluralName = "gr"
+                            PluralName = "gr",
+                            AlternativeSpellings = ["Gram","gram","G", "g","Gr","GM","gm"]
                         },
                         new Unit()
                         {
@@ -224,7 +227,8 @@ namespace MyRecipes.Data
                         new Unit()
                         {
                             UnitName = "oz",
-                            PluralName = "oz"
+                            PluralName = "oz",
+                            AlternativeSpellings = ["Ounce","Ounces","ounce", "ounces"]
                         },
                         new Unit()
                         {
@@ -234,17 +238,26 @@ namespace MyRecipes.Data
                          new Unit()
                         {
                             UnitName = "kg",
-                            PluralName = "kg"
+                            PluralName = "kg",
+                            AlternativeSpellings = ["KG","Kg","Kilogram", "kilogram","Kilo","kilo"]
                         },
                           new Unit()
                         {
                             UnitName = "ml",
-                            PluralName = "ml"
+                            PluralName = "ml",
+                            AlternativeSpellings = ["Millilitre","Millilitres","millilitre", "millilitres","ML","Ml","ml"]
                         },
                            new Unit()
                         {
                             UnitName = "l",
-                            PluralName = "l"
+                            PluralName = "l",
+                            AlternativeSpellings = ["Litre","litre","Liter", "liter","L"]
+                        },
+                           new Unit()
+                        {
+                            UnitName = "lb",
+                            PluralName = "lbs",
+                            AlternativeSpellings = ["Pound","Pounds","pound", "pounds","lb.","LB","LBS","LBs","LB."]
                         },
                             new Unit()
                         {
