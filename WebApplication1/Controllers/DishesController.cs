@@ -286,6 +286,7 @@ namespace MyRecipes.Controllers
          .Include(d => d.Recipes)
              .ThenInclude(r => r.Ingredients.OrderBy(i => i.IngredientNumber))
                  .ThenInclude(i => i.Unit)
+                 .Include(d=> d.Comments)
                  .AsSplitQuery()
          .FirstOrDefaultAsync(d => d.Id == id);
             
