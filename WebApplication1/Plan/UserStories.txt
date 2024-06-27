@@ -26,8 +26,7 @@ User can edit order of ingredients/instructions in create dish form
 User can edit added title/ingredients/instructions in create dish form
 User can paste ASCII characters of fractions when adding ingredients in create dish form
 User can add ingredient with alternative spellings of unit in create dish form
-User can edit order of ingredients/instructions in edit dish form 
-User can edit added title/ingredients/instructions in edit dish form
+User can edit order of ingredients/instructions in edit dish form ?
 User can paste ASCII characters of fractions when adding ingredients in edit dish form
 User can add ingredient with alternative spellings of unit in edit dish form
 Admin user can add categories
@@ -38,6 +37,5 @@ User can edit their own comment
 Admin user can delete any comments
 User can create a new collection
 User can add recipes to collection
-User can share collection with other users
-
+User can print a recipe
 
