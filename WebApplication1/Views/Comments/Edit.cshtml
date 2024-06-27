@@ -19,13 +19,11 @@
                 <span asp-validation-for="CommentBody" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DishId" class="control-label"></label>
-                <select asp-for="DishId" class="form-control" asp-items="ViewBag.DishId"></select>
+                <input type="hidden" asp-for="DishId" class="form-control"/>
                 <span asp-validation-for="DishId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+                <input type="hidden" asp-for="UserId" class="form-control" />
                 <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -36,7 +34,8 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Details" asp-controller="Dishes" asp-route-id="@Model.DishId">Back to Recipe</a>
+
 </div>
 
 @section Scripts {

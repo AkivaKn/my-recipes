@@ -90,6 +90,15 @@
                             @foreach (var comment in Model.Comments)
                             {
                                 <li><small>@comment.User.UserName</small><p>@comment.CommentBody</p></li>
+                                @if (currentUserId == comment.UserId)
+                                {
+                                    <a role="button" asp-action="Delete" asp-controller="Comments" asp-route-id="@comment.Id" class="btn btn-primary btn-sm">Delete</a>
+                                    <a role="button" asp-action="Edit" asp-controller="Comments" asp-route-id="@comment.Id" class="btn btn-primary btn-sm">Edit</a>
+                                }
+                                else if (currentUserRoles.Contains("Admin"))
+                                {
+                                    <a role="button" asp-action="Delete" asp-controller="Comments" asp-route-id="@comment.Id" class="btn btn-primary btn-sm">Delete</a>
+                                }
                             }
                         </ul>
                     }

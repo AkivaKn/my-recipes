@@ -80,6 +80,7 @@ namespace MyRecipes.Controllers
         // GET: Comments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+          
             if (id == null)
             {
                 return NotFound();
@@ -90,8 +91,6 @@ namespace MyRecipes.Controllers
             {
                 return NotFound();
             }
-            ViewData["DishId"] = new SelectList(_context.Dishes, "Id", "DishName", comment.DishId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", comment.UserId);
             return View(comment);
         }
 
@@ -102,11 +101,16 @@ namespace MyRecipes.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CommentBody,DishId,UserId")] Comment comment)
         {
+            var currentUserId = _userManager.GetUserId(HttpContext.User);
+        
             if (id != comment.Id)
             {
                 return NotFound();
             }
-
+            if (currentUserId != comment.UserId)
+            {
+                return RedirectToAction("Details", "Dishes", new { id = comment.DishId });
+            }
             if (ModelState.IsValid)
             {
                 try
@@ -125,7 +129,7 @@ namespace MyRecipes.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Dishes", new { id = comment.DishId });
             }
             ViewData["DishId"] = new SelectList(_context.Dishes, "Id", "DishName", comment.DishId);
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", comment.UserId);
@@ -157,14 +161,21 @@ namespace MyRecipes.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var currentUserId = _userManager.GetUserId(HttpContext.User);
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+            var currentUserRoles = await _userManager.GetRolesAsync(currentUser);
             var comment = await _context.Comments.FindAsync(id);
+            if (currentUserId != comment.UserId && !currentUserRoles.Contains("Admin"))
+            {
+                return RedirectToAction("Details", "Dishes", new { id = comment.DishId });
+            }
             if (comment != null)
             {
                 _context.Comments.Remove(comment);
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Dishes", new { id = comment.DishId });
         }
 
         private bool CommentExists(int id)
