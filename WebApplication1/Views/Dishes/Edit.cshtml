@@ -117,7 +117,6 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            console.log('document ready');
             var units = @Json.Serialize(ViewBag.Units);
             
             $('input, textarea').keypress(function (e) {
@@ -199,78 +198,32 @@
             $('#add-recipe-form').on('click', '.delete-new-ingredient', function () {
                 $(this).parent().remove();
             });
-
-            
             $('#save-new-recipe').click(function () {
                 var recipeTitle = $('#new-recipe-title').val().trim();
                 if (recipeTitle === '') {
-                    alert('Please enter a recipe title.');
-                    return;
+                    recipeTitle = 'Main';
                 }
 
                 var ingredientsArray = [];
                 $('#new-ingredient-list .new-ingredient').each(function () {
                     var ingredientText = $(this).val().trim();
                     if (ingredientText !== '') {
-                        var words = ingredientText.split(' ');
-                        var ingredientNumber = $(this).index();
-                        var Quantity;
-                        var IngredientName;
-                        var UnitId;
-                        var UnitName;
-                        if (!isNaN(words[0])) {
-                            Quantity = parseInt(words.shift());
-                        }
-                        IngredientName = words.join(' ');
-                        console.log(units.length,'is unit length')
-                        for (var i = 0; i < units.length; i++) {
-                            if (words[0] === units[i].unitName || words[0] === units[i].pluralName || units[i].alternativeSpellings?.includes(words[0])) {
-                                UnitId = units[i].id;
-                                UnitName = words[0];
-                                IngredientName = words.slice(1).join(' ');
-                                break;
-                            }
-                        }
-
-                        var newIngredient = {
-                            Quantity: Quantity || null,
-                            IngredientName: IngredientName || "",
-                            Unit: { Id: UnitId || null, UnitName: UnitName || "" },
-                            IngredientNumber: ingredientNumber || 0,
-                        };
-                        ingredientsArray.push(newIngredient);
+                        ingredientsArray.push(ingredientText);
                     }
                 });
-
-                var newRecipe = {
-                    RecipeName: recipeTitle,
-                    Ingredients: ingredientsArray
-                };
-
-                $('#recipe-ul').append('<li><input type="text" class="form-control recipe-input" value="' + newRecipe.RecipeName + '" placeholder="Enter recipe title" />' +
+                $('#recipe-ul').append('<li><input type="text" class="form-control recipe-input" value="' + recipeTitle + '" placeholder="Enter recipe title" />' +
                     '<ul class="ingredient-list">' +
                     ingredientsArray.map(function (ingredient) {
-                        return '<li><input type="text" class="form-control ingredient-input" value="' + (ingredient.Quantity ? ingredient.Quantity + ' ' : '') + ingredient.Unit?.UnitName + ' ' + ingredient.IngredientName + '" placeholder="Quantity Unit Ingredient" />' +
+                        return '<li><input type="text" class="form-control ingredient-input" value="' + ingredient + '" placeholder="Quantity Unit Ingredient" />' +
                             '<button type="button" class="btn btn-danger delete-ingredient">Delete</button></li>';
                     }).join('') +
                     '</ul><button type="button" class="btn btn-primary add-ingredient">Add Ingredient</button>' +
                     '<button type="button" class="btn btn-danger delete-recipe">Delete Recipe</button></li>');
 
-                updateRecipes();
                 $('#add-recipe-form').slideUp();
                 $('#new-recipe-title').val('');
                 $('#new-ingredient-list').empty();
             });
-
-            
-            $(document).on('change', '.recipe-input', function () {
-                updateRecipes();
-            });
-
-            $(document).on('change', '.ingredient-input', function () {
-                updateRecipes();
-            });
-
             
             $(document).on('click', '.add-ingredient', function () {
                 var $ingredientList = $(this).prev('.ingredient-list');
@@ -297,19 +250,19 @@
             }
 
 
-            // Delete ingredient from existing recipe
+    
             $(document).on('click', '.delete-ingredient', function () {
                 $(this).closest('li').remove();
                 updateRecipes();
             });
 
-            // Delete recipe
+           
             $(document).on('click', '.delete-recipe', function () {
                 $(this).closest('li').remove();
                 updateRecipes();
             });
 
-            // Update recipes hidden input
+           
             function updateRecipes() {
                 var recipesArray = [];
                 $('#recipe-ul li').each(function () {
@@ -319,6 +272,7 @@
                         var ingredientText = $(this).find('.ingredient-input').val().trim();
                         if (ingredientText !== '') {
                             var words = ingredientText.split(' ');
+                            var ingredientNumber = $(this).index();
                             var Quantity;
                             var IngredientName;
                             var UnitId;
@@ -329,8 +283,7 @@
                             IngredientName = words.join(' ');
 
                             for (var i = 0; i < units.length; i++) {
-                                console.log(units[i].unitName)
-                                if (words[0] === units[i].unitName || words[0] === units[i].pluralName) {
+                                if (words[0] === units[i].unitName || words[0] === units[i].pluralName || units[i].alternativeSpellings?.includes(words[0])) {
                                     UnitId = units[i].id;
                                     UnitName = words[0];
                                     IngredientName = words.slice(1).join(' ');
@@ -341,7 +294,8 @@
                             var ingredient = {
                                 Quantity: Quantity || null,
                                 IngredientName: IngredientName || "",
-                                Unit: { Id: UnitId || null, UnitName: UnitName || "" }
+                                Unit: { Id: UnitId || null, UnitName: UnitName || "" },
+                                IngredientNumber: ingredientNumber || 0,
                             };
                             ingredientsArray.push(ingredient);
                         }
@@ -396,9 +350,12 @@
                 console.log("Instructions Updated: ", $('#instructions').val());
             }
 
-            $('#recipeForm').submit(function () {
+            $('#recipeForm').submit(function (e) {
+                $('#save-new-recipe').click();
                 updateInstructions();
                 updateRecipes();
+                var formData = $(this).serializeArray();
+                console.log("Form Data: ", formData);
             });
         });
     </script>
