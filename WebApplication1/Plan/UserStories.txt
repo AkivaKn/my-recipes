@@ -38,4 +38,6 @@ Admin user can delete any comments
 User can create a new collection
 User can add recipes to collection
 User can print a recipe
+Management can have a dropdown with links to relevant pages
+Users are directed to dishes list as home page
 
