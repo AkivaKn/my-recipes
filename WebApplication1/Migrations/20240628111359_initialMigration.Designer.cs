@@ -12,8 +12,8 @@ using MyRecipes.Data;
 namespace MyRecipes.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240627064551_unit-spellings")]
-    partial class unitspellings
+    [Migration("20240628111359_initialMigration")]
+    partial class initialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -244,6 +244,55 @@ namespace MyRecipes.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("MyRecipes.Models.Collection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CollectionName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Collection");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CommentBody")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DishId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DishId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("MyRecipes.Models.Dish", b =>
                 {
                     b.Property<int>("Id")
@@ -283,11 +332,32 @@ namespace MyRecipes.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
                     b.HasKey("DishId", "CategoryId");
 
                     b.HasIndex("CategoryId");
 
                     b.ToTable("DishCategories");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.DishCollection", b =>
+                {
+                    b.Property<int>("DishId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CollectionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.HasKey("DishId", "CollectionId");
+
+                    b.HasIndex("CollectionId");
+
+                    b.ToTable("DishCollection");
                 });
 
             modelBuilder.Entity("MyRecipes.Models.Ingredient", b =>
@@ -467,6 +537,32 @@ namespace MyRecipes.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MyRecipes.Models.Collection", b =>
+                {
+                    b.HasOne("MyRecipes.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.Comment", b =>
+                {
+                    b.HasOne("MyRecipes.Models.Dish", "Dish")
+                        .WithMany("Comments")
+                        .HasForeignKey("DishId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyRecipes.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Dish");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MyRecipes.Models.Dish", b =>
                 {
                     b.HasOne("MyRecipes.Models.ApplicationUser", "User")
@@ -491,6 +587,25 @@ namespace MyRecipes.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+
+                    b.Navigation("Dish");
+                });
+
+            modelBuilder.Entity("MyRecipes.Models.DishCollection", b =>
+                {
+                    b.HasOne("MyRecipes.Models.Collection", "Collection")
+                        .WithMany("DishCollections")
+                        .HasForeignKey("CollectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyRecipes.Models.Dish", "Dish")
+                        .WithMany("DishCollections")
+                        .HasForeignKey("DishId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Collection");
 
                     b.Navigation("Dish");
                 });
@@ -539,9 +654,18 @@ namespace MyRecipes.Migrations
                     b.Navigation("DishCategories");
                 });
 
+            modelBuilder.Entity("MyRecipes.Models.Collection", b =>
+                {
+                    b.Navigation("DishCollections");
+                });
+
             modelBuilder.Entity("MyRecipes.Models.Dish", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("DishCategories");
+
+                    b.Navigation("DishCollections");
 
                     b.Navigation("Instructions");
 

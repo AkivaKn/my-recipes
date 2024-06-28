@@ -39,6 +39,7 @@ namespace MyRecipes.Data
 
         public DbSet<User> User { get; set; } = default!;
         public DbSet<MyRecipes.Models.Collection> Collection { get; set; } = default!;
+        public DbSet<MyRecipes.Models.DishCollection> DishCollection { get; set; } = default!;
 
 
     }

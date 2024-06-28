@@ -1,0 +1,10 @@
+﻿@model MyRecipes.Models.DishCollection
+
+
+    
+    <form asp-action="DeleteFromCollection" asp-controller="Dishes" >
+    <input type="hidden" asp-for="DishId" />
+    <input type="hidden" asp-for="CollectionId" />
+    <button type="submit" class="btn btn-danger">Remove from collection</button>
+    </form>
+</div>

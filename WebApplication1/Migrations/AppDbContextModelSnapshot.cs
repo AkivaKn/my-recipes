@@ -329,6 +329,9 @@ namespace MyRecipes.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
                     b.HasKey("DishId", "CategoryId");
 
                     b.HasIndex("CategoryId");
@@ -342,6 +345,9 @@ namespace MyRecipes.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("CollectionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
                     b.HasKey("DishId", "CollectionId");

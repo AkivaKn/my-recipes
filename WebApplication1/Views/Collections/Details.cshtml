@@ -1,29 +1,41 @@
 ﻿@model MyRecipes.Models.Collection
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Collection Details";
 }
 
-<h1>Details</h1>
+<h2>@Model.CollectionName</h2>
 
-<div>
-    <h4>Collection</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CollectionName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CollectionName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Id)
-        </dd>
-    </dl>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="dish-list">
+                @foreach (var dishCollection in Model.DishCollections)
+                {
+                    <div class="list-group-item">
+                        <a asp-action="Details" asp-controller="Dishes" asp-route-id="@dishCollection.DishId"><h5 class="mb-2">@dishCollection.Dish.DishName</h5></a>
+                        @if (!string.IsNullOrEmpty(dishCollection.Dish.DishDescription))
+                        {
+                            <p class="mb-2">@dishCollection.Dish.DishDescription</p>
+                        }
+                        <p>
+                            <small class="text-muted">Categories:</small>
+                            @if(dishCollection.Dish.DishCategories != null)
+                            {
+                            @foreach (var dc in dishCollection.Dish.DishCategories)
+                            {
+                                <span class="badge badge-primary text-black">@dc.Category.CategoryName</span>
+                            }
+                            }
+                        </p>
+                    </div>
+                    <hr class="my-4" style="border-color: #ddd;">
+                }
+            </div>
+        </div>
+    </div>
 </div>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>

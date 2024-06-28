@@ -1,10 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace MyRecipes.Models
 {
     public class DishCategory
     {
+        [Key] 
+        public int Id { get; set; }
         public int DishId { get; set; }
         [ForeignKey("DishId")]
         [JsonIgnore]

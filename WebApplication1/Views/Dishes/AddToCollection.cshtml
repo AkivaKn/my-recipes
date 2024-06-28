@@ -1,0 +1,50 @@
+﻿@using MyRecipes.Models
+@model IEnumerable<MyRecipes.Models.Collection>
+
+@{
+    ViewData["Title"] = "Index";
+    var dishId = ViewBag.DishId;
+}
+
+<h1>Collections</h1>
+
+<p>
+    <a asp-action="Create" asp-controller="Collections" class="btn btn-primary">Create New Collection</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CollectionName)
+            </th>
+            <th>
+                Dishes:
+            </th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CollectionName)
+                </td>
+                <td>
+                   <p>@item.DishCollections.Count() dishes</p>
+                </td>
+                <td>
+                    <a asp-action="Details" asp-controller="Collections" asp-route-id="@item.Id" class="btn btn-primary">View Collection</a>
+                </td>
+                <td>
+                    @if(!@item.DishCollections.Any(dc => dc.DishId == dishId)){
+                       @Html.Partial("_CreateDishCollectionPartial", new DishCollection{DishId = dishId, CollectionId = item.Id})
+                    } else {
+                    @Html.Partial("_DeleteDishCollectionPartial", new DishCollection { DishId = dishId, CollectionId = item.Id })
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

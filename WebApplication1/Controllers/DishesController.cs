@@ -276,6 +276,8 @@ namespace MyRecipes.Controllers
             ViewBag.currentUserId = currentUserId;
             var currentUser = await _userManager.GetUserAsync(HttpContext.User);
             ViewBag.currentUserRoles = await _userManager.GetRolesAsync(currentUser);
+            var collections = await _context.Collection.Where(c => c.UserId == currentUserId).ToListAsync();
+            ViewBag.collections = collections;
             var dishDetails = await _context.Dishes
                 .Include(d => d.User)
              .Include(d => d.DishCategories)
@@ -287,6 +289,8 @@ namespace MyRecipes.Controllers
              .ThenInclude(r => r.Ingredients.OrderBy(i => i.IngredientNumber))
                  .ThenInclude(i => i.Unit)
                  .Include(d=> d.Comments)
+                 .Include(d => d.DishCollections)
+                 .ThenInclude(dc => dc.Collection)
                  .AsSplitQuery()
          .FirstOrDefaultAsync(d => d.Id == id);
             
@@ -312,6 +316,45 @@ namespace MyRecipes.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+        public async Task<IActionResult> AddToCollection(int id)
+        {
+            var currentUserId = _userManager.GetUserId(HttpContext.User);
+            ViewBag.DishId = id;
+            var collections = await _context.Collection.Include(c=> c.DishCollections).Where(c => c.UserId == currentUserId).ToListAsync();
+            return View(collections);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddToCollection([Bind("DishId,CollectionId")] DishCollection dishCollection)
+        {
+            var currentUserId = _userManager.GetUserId(HttpContext.User);
+            var collection = await _context.Collection.FirstOrDefaultAsync(c => c.Id == dishCollection.CollectionId);
+            if (collection != null && collection.UserId == currentUserId)
+            {
+                _context.Add(dishCollection);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("AddToCollection", "Dishes", new { id = dishCollection.DishId });
+
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteFromCollection(DishCollection dishCollection)
+        {
+            if (dishCollection == null)
+            {
+                return NotFound();
+            }
+            var currentUserId = _userManager.GetUserId(HttpContext.User);
+            var collection = await _context.Collection.FirstOrDefaultAsync(c => c.Id == dishCollection.CollectionId);
+            if (collection != null && collection.UserId == currentUserId && dishCollection != null)
+            {
+                _context.DishCollection.Remove(dishCollection);
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction("AddToCollection", "Dishes", new { id = dishCollection.DishId });
+
         }
     }
 }

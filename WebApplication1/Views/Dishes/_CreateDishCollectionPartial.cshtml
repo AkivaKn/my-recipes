@@ -1,0 +1,15 @@
+﻿@model MyRecipes.Models.DishCollection
+
+
+
+        <form asp-action="AddToCollection" asp-controller="Dishes">
+                <input type="hidden" asp-for="DishId" />
+                <input type="hidden" asp-for="CollectionId" />
+                <button type="submit"class="btn btn-primary">Add to collection</button>
+        </form>
+  
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

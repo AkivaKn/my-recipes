@@ -16,20 +16,24 @@
                 @Html.DisplayNameFor(model => model.CollectionName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User)
+                Dishes:
             </th>
+            <th></th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CollectionName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
-            </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CollectionName)
+                </td>
+                <td>
+                    <p>@item.DishCollections.Count() dishes</p>
+                </td>
+                <td>
+                    <a asp-action="Details" asp-controller="Collections" asp-route-id="@item.Id" class="btn btn-primary">View Collection</a>
+                </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
