@@ -88,7 +88,7 @@ namespace MyRecipes.Data
 
                         {
                             InstructionNumber = 3,
-                            InstructionBody = "Take 1.5 cups of the batter and pour in tin. Bake for about 10 minu or so until set.",
+                            InstructionBody = "Take 1.5 cups of the batter and pour in tin. Bake for about 10 minutes or so until set.",
                             DishId = 1,
                         },
                         new Instruction()

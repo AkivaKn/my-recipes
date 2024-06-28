@@ -4,12 +4,21 @@
 }
 
 <div class="container mt-5">
+    <div class="row">
+        <div class="col-md-3">
     @using (Html.BeginForm())
     {
         <p>
             Find by name: @Html.TextBox("nameSearchString")
         </p>
     }
+        </div>
+        <div class="col-md-3">
+
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
+    </div>
+
+    </div>
     <div class="row">
         <div class="col-md-3">
             @await Html.PartialAsync("_CategoryFilterPartial", ViewBag.Categories as IEnumerable<MyRecipes.Models.Category>)
@@ -28,7 +37,9 @@
     @section Scripts {
         <script>
             $(document).ready(function () {
-               
+                function getDishDetailsUrl(dishId) {
+                    return '@Url.Action("Details", "Dishes")' + '/' + dishId;
+                }
 
                 function displayDishes(dishes) {
                     const dishList = $('#dish-list');
@@ -36,7 +47,7 @@
                     dishes.forEach(dish => {
                         const dishDescription = dish.dishDescription !== null? `<p class="mb-2">${dish.dishDescription}</p>` : '';
                         const dishItem = `<div class="list-group-item">
-                                    <a asp-action="Details" asp-route-id="${dish.id}"><h5 class="mb-2">${dish.dishName}</h5></a>
+                                                <a href="${getDishDetailsUrl(dish.id)}"><h5 class="mb-2">${dish.dishName}</h5></a>
                                                ${dishDescription}
                                     <p><small class="text-muted">Categories:</small> ${dish.categories.map(dc => `<span class="badge badge-primary text-black">${dc.categoryName}</span>`).join(' ')}</p>
                                 </div>
