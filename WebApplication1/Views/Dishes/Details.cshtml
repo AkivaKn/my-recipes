@@ -184,20 +184,30 @@
         </div>
     </div>
 </div>
-@section Scripts{
+
+@section Scripts {
     <script>
         $(document).ready(function () {
             $('#print-btn').on('click', function (event) {
                 event.preventDefault();
                 var dishCardHtml = $('#dish-card').html();
                 var tempDiv = $('<div>').html(dishCardHtml);
-                tempDiv.find('button, a.btn').remove();
+                tempDiv.find('button, a.btn').remove(); 
                 var bootstrapCssLink = '<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">';
-                var fullHtml = bootstrapCssLink + tempDiv.html();
-                $('#htmlString').val(fullHtml);
-                $('#pdf-form').submit();
+                 var printCss = '<style>' +
+                               '@@page { size: auto; margin: 0mm; }' +
+                               'body { margin: 10mm; }' +
+                               'header, footer { display: none; }' +
+                               '</style>';
+                var fullHtml = bootstrapCssLink + printCss + tempDiv.html();
+
+                var printWindow = window.open('', '_blank', 'width=800,height=600');
+                printWindow.document.write(fullHtml);
+                printWindow.document.close();
+                printWindow.focus();
+                printWindow.print();
+                printWindow.close();
             });
         });
     </script>
-
 }
