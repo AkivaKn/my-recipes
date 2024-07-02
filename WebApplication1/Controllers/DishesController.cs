@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyRecipes.Data;
 using MyRecipes.Models;
+using MyRecipes.ViewModels;
 using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace MyRecipes.Controllers
 {
@@ -57,42 +59,48 @@ namespace MyRecipes.Controllers
             ViewBag.Categories = categories;
             return View();
         }
+    
+
         [HttpPost]
         [ActionName("Create")]
-        public async Task<IActionResult> CreatePost()
+        public async Task<IActionResult> CreatePost([Bind("DishName,DishDescription,Servings,Notes,CategoriesJson,InstructionsJson,RecipesJson")] DishForm dishForm)
         {
+            if (!ModelState.IsValid)
+            {
+                var units = await _context.Units.ToListAsync();
+                ViewBag.Units = units;
+                var categories = await _context.Categories.ToListAsync();
+                ViewBag.Categories = categories;
+                return View(dishForm);
+            }
+           
             var currentUserId = _userManager.GetUserId(HttpContext.User);
-            Console.WriteLine($"{ currentUserId} is the current users id");
-            var dishName = Request.Form["DishName"];
-            var dishDescription = Request.Form["DishDescription"];
-            var servings = int.Parse(Request.Form["Servings"]);
-            var notes = Request.Form["Notes"];
+            Console.WriteLine($"{currentUserId} is the current users id");
+            
             var dish = new Dish
             {
-                DishName = dishName,
-                DishDescription = dishDescription,
-                Servings = servings,
-                Notes = notes,
+                DishName = dishForm.DishName,
+                DishDescription = dishForm.DishDescription,
+                Servings = dishForm.Servings,
+                Notes = dishForm.Notes,
                 UserId = currentUserId
             };
             await _context.Dishes.AddAsync(dish);
             await _context.SaveChangesAsync();
-            var categoriesJson = Request.Form["categories"];
-            var categories = JsonConvert.DeserializeObject<List<DishCategory>>(categoriesJson);
-            if (categories != null)
+            
+            if (dishForm.Categories != null)
             {
-                foreach (var category in categories)
+                foreach (var category in dishForm.Categories)
                 {
                     category.DishId = dish.Id;
                     await _context.DishCategories.AddAsync(category);
                 }
                 await _context.SaveChangesAsync();
             }
-            var instructionsJson = Request.Form["Instructions"];
-            var instructions = JsonConvert.DeserializeObject<List<Instruction>>(instructionsJson);
-            if (instructions != null)
+           
+            if (dishForm.Instructions != null)
             {
-                foreach (var instruction in instructions)
+                foreach (var instruction in dishForm.Instructions)
                 {
                     instruction.DishId = dish.Id;
                     _context.Instructions.Add(instruction);
@@ -100,11 +108,10 @@ namespace MyRecipes.Controllers
             }
             await _context.SaveChangesAsync();
 
-            var recipesJson = Request.Form["sections"];
-            var recipes = JsonConvert.DeserializeObject<List<Recipe>>(recipesJson);
-            if (recipes != null)
+        
+            if (dishForm.Recipes != null)
             {
-                foreach (var newRecipe in recipes)
+                foreach (var newRecipe in dishForm.Recipes)
                 {
                     var recipe = new Recipe
                     {
@@ -131,6 +138,7 @@ namespace MyRecipes.Controllers
 
             return RedirectToAction("Details", "Dishes", new { id = dish.Id });
         }
+     
         public async Task<IActionResult> Edit(int id)
         {
             var currentUserId = _userManager.GetUserId(HttpContext.User);
@@ -153,14 +161,45 @@ namespace MyRecipes.Controllers
          .FirstOrDefaultAsync(d => d.Id == id);
             if (dishDetails != null && currentUserId == dishDetails.UserId || currentUserRoles.Contains("Admin"))
             {
-            return View(dishDetails);
+                string categoriesJson = System.Text.Json.JsonSerializer.Serialize(dishDetails.DishCategories);
+                string instructionsJson = System.Text.Json.JsonSerializer.Serialize(dishDetails.Instructions);
+                string recipesJson = System.Text.Json.JsonSerializer.Serialize(dishDetails.Recipes.Select(r => new
+                {
+                    r.RecipeName,
+                    Ingredients = r.Ingredients.Select(i => new
+                    {
+                        i.IngredientName,
+                        i.Quantity,
+                        Unit = i.Unit != null ? new { i.Unit.Id, i.Unit.UnitName } : null
+                    })
+                }));
+                var dishForm = new DishForm
+                {
+                    Id = dishDetails.Id,
+                    DishName = dishDetails.DishName,
+                    DishDescription = dishDetails.DishDescription,
+                    Servings = dishDetails.Servings,
+                    Notes = dishDetails.Notes,
+                    CategoriesJson = categoriesJson,
+                    InstructionsJson = instructionsJson,
+                    RecipesJson = recipesJson,
+                };
+                return View(dishForm);
             }
-           return View("Empty");
+            return View("Empty");
         }
         [HttpPost]
         [ActionName("Edit")]
-        public async Task<IActionResult> EditPost(int id)
+        public async Task<IActionResult> EditPost(int id, [Bind("Id,DishName,DishDescription,Servings,Notes,CategoriesJson,InstructionsJson,RecipesJson")] DishForm dishForm)
         {
+            if (!ModelState.IsValid)
+            {
+                var units = await _context.Units.ToListAsync();
+                ViewBag.Units = units;
+                var categories = await _context.Categories.ToListAsync();
+                ViewBag.Categories = categories;
+                return View(dishForm);
+            }
             var currentUserId = _userManager.GetUserId(HttpContext.User);
             var currentUser = await _userManager.GetUserAsync(HttpContext.User);
             var currentUserRoles = await _userManager.GetRolesAsync(currentUser);
@@ -179,24 +218,18 @@ namespace MyRecipes.Controllers
             {
                 return RedirectToAction("Details", "Dishes", new { id = id });
             }
-            var dishName = Request.Form["DishName"];
-            var dishDescription = Request.Form["DishDescription"];
-            var servings = int.Parse(Request.Form["Servings"]);
-            var notes = Request.Form["Notes"];
+            
 
-            dishToUpdate.DishName = dishName;
-            dishToUpdate.DishDescription = dishDescription;
-            dishToUpdate.Servings = servings;
-            dishToUpdate.Notes = notes;
+            dishToUpdate.DishName = dishForm.DishName;
+            dishToUpdate.DishDescription = dishForm.DishDescription;
+            dishToUpdate.Servings = dishForm.Servings;
+            dishToUpdate.Notes = dishForm.Notes;
 
-
-            var categoriesJson = Request.Form["categories"];
-            var categories = JsonConvert.DeserializeObject<List<DishCategory>>(categoriesJson);
-            if (categories != null)
+            if (dishForm.Categories != null)
             {
 
                 dishToUpdate.DishCategories.Clear();
-                foreach (var category in categories)
+                foreach (var category in dishForm.Categories)
                 {
                     category.DishId = dishToUpdate.Id;
                     dishToUpdate.DishCategories.Add(category);
@@ -204,13 +237,12 @@ namespace MyRecipes.Controllers
             }
 
 
-            var instructionsJson = Request.Form["instructions"];
-            var instructions = JsonConvert.DeserializeObject<List<Instruction>>(instructionsJson);
-            if (instructions != null)
+           
+            if (dishForm.Instructions != null)
             {
 
                 dishToUpdate.Instructions.Clear();
-                foreach (var instruction in instructions)
+                foreach (var instruction in dishForm.Instructions)
                 {
                     instruction.DishId = dishToUpdate.Id;
                     dishToUpdate.Instructions.Add(instruction);
@@ -218,16 +250,12 @@ namespace MyRecipes.Controllers
             }
 
 
-            var recipesJson = Request.Form["recipes"];
-            var recipes = JsonConvert.DeserializeObject<List<Recipe>>(recipesJson, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
-            if (recipes != null)
+            
+            if (dishForm.Recipes != null)
             {
 
                 dishToUpdate.Recipes.Clear();
-                foreach (var newRecipe in recipes)
+                foreach (var newRecipe in dishForm.Recipes)
                 {
                     if (newRecipe.RecipeName != null)
                     {
@@ -249,9 +277,9 @@ namespace MyRecipes.Controllers
                                     IngredientNumber = newIngredient.IngredientNumber,
                                 };
 
-                                if (newIngredient.Unit.Id > 0)
+                                if (newIngredient.UnitId != null)
                                 {
-                                    ingredient.UnitId = newIngredient.Unit.Id;
+                                    ingredient.UnitId = newIngredient.UnitId;
                                 }
 
                                 if (newIngredient.Quantity > 0)
@@ -269,7 +297,6 @@ namespace MyRecipes.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Details", "Dishes", new { id = id });
         }
-
         public async Task<IActionResult> Details(int id)
         {
             var currentUserId = _userManager.GetUserId(HttpContext.User);

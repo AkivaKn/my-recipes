@@ -1,4 +1,5 @@
 ﻿@using MyRecipes.Models
+@model MyRecipes.ViewModels.DishForm
 @{
     ViewData["Title"] = "New Recipe";
     var units = ViewBag.Units as List<Unit>;
@@ -11,15 +12,19 @@
             <h2 class="card-title">Add a New Recipe</h2>
 
             <form asp-action="Create" method="post" id="recipeForm">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="DishName">Dish Name</label>
-                            <input type="text" id="DishName" name="DishName" class="form-control" />
+                            <label asp-for="DishName">Title</label>
+                            <input asp-for="DishName" class="form-control" />
+                            <span asp-validation-for="DishName" class="text-danger"></span>
+
                         </div>
                         <div class="form-group">
-                            <label for="DishDescription">Dish Description</label>
-                            <textarea id="DishDescription" name="DishDescription" class="form-control"></textarea>
+                            <label asp-for="DishDescription">Dish Description</label>
+                            <textarea asp-for="DishDescription" class="form-control"></textarea>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -34,8 +39,8 @@
 
                                     <li>
                                         <div class="form-check">
-                                            <input class="form-check-input category-input" type="checkbox" value=@category.Id id=@category.CategoryName>
-                                            <label class="form-check-label" for=@category.CategoryName>
+                                            <input class="form-check-input category-input" type="checkbox" value=@category.Id >
+                                            <label class="form-check-label" for=@category.Id>
                                                 @category.CategoryName
                                             </label>
                                         </div>
@@ -44,10 +49,10 @@
 
                             </ul>
                         </div>
-                        <input type="hidden" id="categories" name="categories" class="form-control" value="[]" />
+                        <input type="hidden" id="categories" asp-for="CategoriesJson" class="form-control" />
                         <div class="form-group">
-                            <label for="Servings">Servings</label>
-                            <input type="number" id="Servings" name="Servings" class="form-control" value="1" />
+                            <label asp-for="Servings">Servings</label>
+                            <input type="number" asp-for="Servings" class="form-control" />
                         </div>
                     </div>
                 </div>
@@ -56,16 +61,16 @@
                         <div class="form-group" id="recipe-list">
                             <label>Sections:</label>
                             <ul id="recipes-list"></ul>
-                            <label for="new-section-title">Title</label>
-                            <div class="form-group" id="section-input">
-                                <input type="text" id="new-section-title" name="new-section-title" class="form-control" placeholder="Enter title e.g. Dough" />
+                            <label for="new-recipe-title">Title</label>
+                            <div class="form-group" id="recipe-input">
+                                <input type="text" id="new-recipe-title" name="new-recipe-title" class="form-control" placeholder="Enter title e.g. Dough" />
                                 <ul class="ingredients-list"></ul>
                                 <label for="new-ingredients">Ingredients</label>
                                 <textarea id="new-ingredients" name="new-ingredients" class="form-control" placeholder="Enter one or multiple ingredients and press Enter"></textarea>
                                 <button type="button" id="add-ingredients" class="btn btn-primary">Add Ingredients</button>
                             </div>
-                            <input type="hidden" id="sections" name="sections" value="[]" />
-                            <button type="button" id="add-section" class="btn btn-primary">Add Section</button>
+                            <input type="hidden" id="recipes" asp-for="RecipesJson" />
+                            <button type="button" id="add-recipe" class="btn btn-primary">Add Section</button>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -74,13 +79,13 @@
                             <ul id="instruction-ul"></ul>
                             <textarea id="new-instructions" name="new-instructions" class="form-control" placeholder="Enter one or multiple instructions and press Enter"></textarea>
                             <button type="button" id="add-instructions" class="btn btn-primary">Add Instructions</button>
-                            <input type="hidden" id="instructions" name="instructions" />
+                            <input type="hidden" id="Instructions" asp-for="InstructionsJson" />
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="Notes">Notes</label>
-                    <textarea id="Notes" name="Notes" class="form-control"></textarea>
+                    <label asp-for="Notes">Notes</label>
+                    <textarea asp-for="Notes" class="form-control"></textarea>
                 </div>
                 <button type="submit" class="btn btn-success">Create Dish</button>
             </form>
@@ -92,20 +97,73 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            var units = @Html.Raw(Json.Serialize(ViewBag.Units));
+            const units = @Html.Raw(Json.Serialize(ViewBag.Units));
+            checkForExistingFormData();
+            function checkForExistingFormData(){
+            const formCategories = JSON.parse($('#categories').val());
+            if (formCategories.length > 0){
+                $('.category-input').each(function (){
+                     const categoryId = $(this).val();
+                      const found = formCategories.some(category => category.CategoryId === categoryId);
+        if (found) {
+            $(this).prop('checked', true);
+        }
+                })
+            }
+            const formInstructions = JSON.parse($('#Instructions').val());
+              formInstructions.forEach((instruction) => {
+                    if (instruction.InstructionBody.trim() !== '') {
+                        $('#instruction-ul').append('<li class="instruction">' + instruction.InstructionBody + '</li>');
+                    }
+                }
+                )
+
+                $('.instruction').on("click", function () {
+                    editCurrentTextAreaField($(this));
+                })
+                const formRecipes = JSON.parse($('#recipes').val());
+                formRecipes.forEach((recipe) => {
+        const recipeTitle = recipe.RecipeName || 'Main';
+        const ingredients = recipe.Ingredients || [];
+         let ingredientsHTML = '';
+        ingredients.forEach((ingredient) => {
+            const unit = units.find(u => u.id === ingredient.UnitId);
+            const unitName = unit ? unit.unitName : ''; 
+            const ingredientText = `${ingredient.Quantity || ''} ${unitName} ${ingredient.IngredientName || ''}`;
+            ingredientsHTML += `<li class="ingredient">${ingredientText}</li>`;
+        });
+
+          $('#recipes-list').append(`<li class="recipe">
+                                                 <h5 class="recipe-title">${recipeTitle}</h5>
+                                                          <ul class="ingredients-list">${ingredientsHTML}</ul>
+                                                 </li>`)
+
+
+        
+    });
+     $('.ingredient').on("click", function () {
+                    editCurrentInputField($(this));
+                })
+                $('.recipe-title').on("click", function () {
+                    editCurrentInputField($(this));
+                })
+     $(function () {
+        $(".ingredients-list").sortable();
+        $("#recipes-list").sortable();
+    });
+            }
             $('#recipeForm').submit(function (e) {
-                $('#add-section').click();
-                convertIngredientsToIngredientModel();
-                updateSectionInput();
-                var formData = $(this).serializeArray();
+                $('#add-recipe').click();
+                updateRecipeInput();
                 updateInstructions();
+                const formData = $(this).serializeArray();
                 console.log("Form Data: ", formData);
             });
             $('input, textarea').keypress(function (e) {
                 if (e.which === 13) {
                     e.preventDefault();
-                    var $this = $(this);
-                    var index = $('input, textarea').index($this);
+                    const $this = $(this);
+                    const index = $('input, textarea').index($this);
                     $('input, textarea').eq(index + 1).focus();
                 }
             });
@@ -119,10 +177,10 @@
                 if (currentField.find('input').length > 0) {
                     return;
                 }
-                var currentFieldText = currentField.html();
+                const currentFieldText = currentField.html();
                 currentField.html('');
                 currentField.append(`<input type="text" value="${currentFieldText}" />`);
-                var input = currentField.find('input');
+                const input = currentField.find('input');
                 input.focus().select();
                 input.on('keypress', function (e) {
                     if (e.which === 13) {
@@ -135,18 +193,18 @@
                 });
             }
             function updateInputField(input) {
-                var newValue = input.val();
-                var fieldItem = input.closest('.ingredient,.section-title');
+                const newValue = input.val();
+                const fieldItem = input.closest('.ingredient,.section-title');
                 fieldItem.html(newValue);
             }
             function editCurrentTextAreaField(currentField) {
                 if (currentField.find('textarea').length > 0) {
                     return;
                 }
-                var currentFieldText = currentField.html();
+                const currentFieldText = currentField.html();
                 currentField.html('');
                 currentField.append('<textarea>' + currentFieldText + '</textarea>');
-                var textarea = currentField.find('textarea');
+                const textarea = currentField.find('textarea');
                 textarea.focus().select();
                 textarea.on('keypress', function (e) {
                     if (e.which === 13) {
@@ -159,15 +217,15 @@
                 });
             }
             function updateTextAreaField(textarea) {
-                var newValue = textarea.val();
-                var fieldItem = textarea.closest('.instruction');
+                const newValue = textarea.val();
+                const fieldItem = textarea.closest('.instruction');
                 fieldItem.html(newValue);
             }
             $('.category-input').change(
                 function () {
                     let CategoryId = $(this).val();
                     if ($(this).is(':checked')) {
-                        var newCategory = {
+                        const newCategory = {
                             CategoryId
                         }
                         updateCategories(newCategory)
@@ -185,7 +243,6 @@
                 }
                 categoriesArray.push(newCategory);
                 $('#categories').val(JSON.stringify(categoriesArray));
-                console.log("Categories Updated: ", $('#categories').val());
             }
             function deleteCategory(categoryId) {
                 let categoriesArray;
@@ -194,9 +251,8 @@
                 } catch (e) {
                     categoriesArray = [];
                 }
-                var filteredCategories = categoriesArray.filter((category) => category?.CategoryId !== categoryId)
+                const filteredCategories = categoriesArray.filter((category) => category?.CategoryId !== categoryId)
                 $('#categories').val(JSON.stringify(filteredCategories));
-                console.log("Categories Updated: ", $('#categories').val());
             }
 
             $('#add-ingredients').click(function () {
@@ -204,7 +260,7 @@
                 const ingredients = ingredientData.split('\n');
                 ingredients.forEach((ingredient) => {
                     if (ingredient.trim() !== '') {
-                        $('#section-input .ingredients-list').append(`<li class="ingredient">${ingredient}</li>`);
+                        $('#recipe-input .ingredients-list').append(`<li class="ingredient">${ingredient}</li>`);
                         $('#new-ingredients').val('');
                     }
                 })
@@ -220,23 +276,23 @@
                 }
             });
 
-            $('#add-section').click(function () {
-                var sectionTitle = $('#new-section-title').val() || "Main";
+            $('#add-recipe').click(function () {
+                const recipeTitle = $('#new-recipe-title').val() || "Main";
                 $('#add-ingredients').click();
-                var ingredientsList = $('#section-input .ingredients-list').clone();
-                $('#recipes-list').append(`<li class="section">
-                                         <h5 class="section-title">${sectionTitle}</h5>
-                                                  <ul class="ingredients-list">${ingredientsList.html()}</ul>
-                                         </li>`);
+                const ingredientsList = $('#recipe-input .ingredients-list').clone();
+                $('#recipes-list').append(`<li class="recipe">
+                                                 <h5 class="recipe-title">${recipeTitle}</h5>
+                                                          <ul class="ingredients-list">${ingredientsList.html()}</ul>
+                                                 </li>`);
                 $(function () {
                     $(".ingredients-list").sortable();
                 });
-                $('#new-section-title').val('');
-                $('#section-input .ingredients-list').empty();
+                $('#new-recipe-title').val('');
+                $('#recipe-input .ingredients-list').empty();
                 $('.ingredient').on("click", function () {
                     editCurrentInputField($(this));
                 })
-                $('.section-title').on("click", function () {
+                $('.recipe-title').on("click", function () {
                     editCurrentInputField($(this));
                 })
             });
@@ -268,125 +324,121 @@
                         return null;
                 }
             }
-            function convertIngredientsToIngredientModel() {
-                $('.ingredient').each(function () {
-                    var asciiLookup = [188, 189, 190];
-                    var fractionLookup = ['1/4','1/3','1/2','2/3','3/4']
-                    var ingredientValue = $(this).text();
-                    var ingredientNumber = $(this).index();
-                    let words = ingredientValue.split(' ');
-                    let Quantity;
-                    let IngredientName;
-                    let UnitId;
-                    let UnitName;
-                    var firstWordCharacters = words[0].split('');
+            function convertIngredientToIngredientModel(ingredientValue, ingredientNumber) {
+                if (ingredientValue === '') {
+                    return;
+                }
+                const asciiLookup = [188, 189, 190];
+                const fractionLookup = ['1/4', '1/3', '1/2', '2/3', '3/4']
+                let words = ingredientValue.split(' ');
+                let Quantity;
+                let IngredientName;
+                let UnitId;
+                let UnitName;
+                let firstWordCharacters = words[0].split('');
 
-                    var firstWordNumericCharacters = [];
-                    var firstThreeCharacters = firstWordCharacters.slice(0, 3).join('');
-                    console.log(firstThreeCharacters,'first three')
-                    var j = 0;
-                    var k = 0;
-                    if (fractionLookup.includes(firstThreeCharacters)) {
-                        var characters = convertFractionToNumber(firstThreeCharacters).split('');
-                        characters.forEach((char) => {
+                const firstWordNumericCharacters = [];
+                const firstThreeCharacters = firstWordCharacters.slice(0, 3).join('');
+                let j = 0;
+                let k = 0;
+                if (fractionLookup.includes(firstThreeCharacters)) {
+                    const characters = convertFractionToNumber(firstThreeCharacters).split('');
+                    characters.forEach((char) => {
                         firstWordNumericCharacters.push(char);
-                        })
-                        j = 3;
-                        k = 3;
-                    }
-                    for (let i = j; i < firstWordCharacters.length;i++) {
-                        let char = firstWordCharacters[i];
-                        if (!isNaN(parseInt(char))) {
-                            firstWordNumericCharacters.push(char);
-                            k++;
-                        } else if (asciiLookup.includes(char.charCodeAt(0))) {
-                            var convertedChar = convertAsciiToNumber(char.charCodeAt(0));
-                            firstWordNumericCharacters.push(convertedChar);
-                            k++;
-                        }  else {
-                            break;
-                        }
-                    }
-                    if (firstWordNumericCharacters.length > 0) {
-                        firstWordCharacters = firstWordCharacters.slice(k);
-                        console.log(firstWordCharacters,'is first word')
-                        if (firstWordCharacters.length === 0 && asciiLookup.includes(words[1].charCodeAt(0))) {
-                            var convertedChar = convertAsciiToNumber(words[1].charCodeAt(0));
-                            firstWordNumericCharacters.push(convertedChar);
-                            if (words[1].length > 1) {
-                                words[1] = words[1].slice(1);
-                            } else {
-                            words.shift();
-                            }
-                        }  else if (firstWordCharacters.length == 0 && fractionLookup.includes(words[1])) {
-                            var convertedWord = convertFractionToNumber(words[1]);
-                            firstWordNumericCharacters.push(convertedWord);
-                            words.shift();
-                        } else if (firstWordCharacters.length == 0 && fractionLookup.includes(words[1].slice(0,3))) {
-                            var convertedWord = convertFractionToNumber(words[1].slice(0,3));
-                            firstWordNumericCharacters.push(convertedWord);
-                            words[1] = words[1].slice(3);
-                        }
-                        if (firstWordCharacters.length > 0) {
-                            words[0] = firstWordCharacters.join('');
-                        } else {
-                        words.shift()
-                        }
-                        Quantity = parseFloat(firstWordNumericCharacters.join(''));
-                        IngredientName = words.join(' ');
+                    })
+                    j = 3;
+                    k = 3;
+                }
+                for (let i = j; i < firstWordCharacters.length; i++) {
+                    let char = firstWordCharacters[i];
+                    if (!isNaN(parseInt(char))) {
+                        firstWordNumericCharacters.push(char);
+                        k++;
+                    } else if (asciiLookup.includes(char.charCodeAt(0))) {
+                        const convertedChar = convertAsciiToNumber(char.charCodeAt(0));
+                        firstWordNumericCharacters.push(convertedChar);
+                        k++;
                     } else {
-                        IngredientName = ingredientValue;
+                        break;
                     }
-                    
-
-                    words = IngredientName.split(' ');
-                    for (var i = 0; i < units.length; i++) {
-                        if (words[0] === units[i].unitName || words[0] === units[i].pluralName || units[i].alternativeSpellings?.includes(words[0])) {
-                            UnitId = units[i].id;
-                            UnitName = words[0];
-                            IngredientName = words.slice(1).join(' ');
-                            break;
+                }
+                if (firstWordNumericCharacters.length > 0) {
+                    firstWordCharacters = firstWordCharacters.slice(k);
+                    if (firstWordCharacters.length === 0 && asciiLookup.includes(words[1].charCodeAt(0))) {
+                        const convertedChar = convertAsciiToNumber(words[1].charCodeAt(0));
+                        firstWordNumericCharacters.push(convertedChar);
+                        if (words[1].length > 1) {
+                            words[1] = words[1].slice(1);
+                        } else {
+                            words.shift();
                         }
+                    } else if (firstWordCharacters.length == 0 && fractionLookup.includes(words[1])) {
+                        const convertedWord = convertFractionToNumber(words[1]);
+                        firstWordNumericCharacters.push(convertedWord);
+                        words.shift();
+                    } else if (firstWordCharacters.length == 0 && fractionLookup.includes(words[1].slice(0, 3))) {
+                        const convertedWord = convertFractionToNumber(words[1].slice(0, 3));
+                        firstWordNumericCharacters.push(convertedWord);
+                        words[1] = words[1].slice(3);
                     }
-                    var newIngredient = {
-                        Quantity: Quantity || null,
-                        IngredientName: IngredientName || "",
-                        IngredientNumber: ingredientNumber || 0,
-                        UnitId: UnitId || null,
-                        UnitName: UnitName || ""
+                    if (firstWordCharacters.length > 0) {
+                        words[0] = firstWordCharacters.join('');
+                    } else {
+                        words.shift()
                     }
-                    $(this).text(JSON.stringify(newIngredient));
-                })
+                    Quantity = parseFloat(firstWordNumericCharacters.join(''));
+                    IngredientName = words.join(' ');
+                } else {
+                    IngredientName = ingredientValue;
+                }
+
+
+                words = IngredientName.split(' ');
+                for (let i = 0; i < units.length; i++) {
+                    if (words[0] === units[i].unitName || words[0] === units[i].pluralName || units[i].alternativeSpellings?.includes(words[0])) {
+                        UnitId = units[i].id;
+                        UnitName = words[0];
+                        IngredientName = words.slice(1).join(' ');
+                        break;
+                    }
+                }
+                const newIngredient = {
+                    Quantity: Quantity || null,
+                    IngredientName: IngredientName || "",
+                    IngredientNumber: ingredientNumber || 0,
+                    UnitId: UnitId || null,
+                    UnitName: UnitName || ""
+                }
+                return newIngredient;
             }
 
 
 
 
 
-            function updateSectionInput() {
-                var sectionsArray = [];
-                $('.section').each(function () {
-                    var sectionTitle = $(this).find('.section-title').text();
-                    var ingredients = [];
+            function updateRecipeInput() {
+                const recipesArray = [];
+                $('.recipe').each(function () {
+                    const recipeTitle = $(this).find('.recipe-title').text();
+                    const ingredients = [];
                     $(this).find('.ingredient').each(function () {
-                        console.log($(this).text(), 'is the new ingredient to add');
-                        ingredients.push(JSON.parse($(this).text()));
+                        const convertedIngredient = convertIngredientToIngredientModel($(this).text(), $(this).index());
+                        ingredients.push(convertedIngredient);
                     })
-                    var newSection = {
-                        RecipeName: sectionTitle || 'Main',
-                        Ingredients: ingredients
-                    };
-                    console.log(newSection, 'is new section')
+
                     if (ingredients.length > 0) {
-                        sectionsArray.push(newSection)
+                        const newRecipe = {
+                            RecipeName: recipeTitle || 'Main',
+                            Ingredients: ingredients
+                        };
+                        recipesArray.push(newRecipe)
                     }
                 });
-                console.log(sectionsArray, 'sections array');
-                $('#sections').val(JSON.stringify(sectionsArray));
+                $('#recipes').val(JSON.stringify(recipesArray));
             }
             $('#add-instructions').click(function () {
-                var instructionData = $('#new-instructions').val();
-                var instructions = instructionData.split('\n');
+                const instructionData = $('#new-instructions').val();
+                const instructions = instructionData.split('\n');
                 instructions.forEach((instruction) => {
                     if (instruction.trim() !== '') {
                         $('#instruction-ul').append('<li class="instruction">' + instruction + '</li>');
@@ -407,11 +459,13 @@
             });
 
             function updateInstructions() {
-                var instructionsArray = [];
+                $('#add-instructions').click();
+                const instructionsArray = [];
                 $('#instruction-ul li').each(function (index) {
                     instructionsArray.push({ InstructionNumber: index + 1, InstructionBody: $(this).text() });
                 });
-                $('#instructions').val(JSON.stringify(instructionsArray));
+                $('#Instructions').val(JSON.stringify(instructionsArray));
+
             }
         });
     </script>

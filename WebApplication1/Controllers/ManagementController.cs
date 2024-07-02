@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyRecipes.Data;
 using MyRecipes.Models;
+using MyRecipes.ViewModels;
 using Newtonsoft.Json;
 
 namespace MyRecipes.Controllers

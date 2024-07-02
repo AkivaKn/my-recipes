@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MyRecipes.Models;
+using MyRecipes.ViewModels;
 
 namespace MyRecipes.Data
 {
