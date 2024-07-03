@@ -32,7 +32,6 @@ namespace MyRecipes.Controllers
             var currentUserRoles = await _userManager.GetRolesAsync(currentUser);
             ViewBag.currentUserRoles = currentUserRoles;
             var allRoles = await _roleManager.Roles.ToListAsync();
-            Console.WriteLine($"{currentUserRoles} is this users roles");
             ViewBag.Roles = allRoles;
 
             var users = await _userManager.Users.ToListAsync();
@@ -42,7 +41,6 @@ namespace MyRecipes.Controllers
             foreach (var user in users)
             {
                 var roles = await _userManager.GetRolesAsync(user);
-                Console.WriteLine($"User: {user.UserName}, Roles: {string.Join(", ", roles)}");
                 userList.Add(new User
                 {
                     UserId = user.Id,
@@ -62,18 +60,7 @@ namespace MyRecipes.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
-                if (!await _userManager.IsInRoleAsync(user, "UnapprovedUser"))
-                {
-                    return BadRequest("User is already approved.");
-                }
-
-                var currentRoles = await _userManager.GetRolesAsync(user);
-
-                var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
-                if (!removeResult.Succeeded)
-                {
-                    return BadRequest("Failed to remove user roles.");
-                }
+               
 
                 var addResult = await _userManager.AddToRoleAsync(user, "User");
                 if (!addResult.Succeeded)

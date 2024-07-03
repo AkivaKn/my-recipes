@@ -1,7 +1,6 @@
 ﻿@model IEnumerable<MyRecipes.ViewModels.User>
 @{
     var roles = ViewBag.Roles as List<Microsoft.AspNetCore.Identity.IdentityRole>;
-    ViewBag.Roles = roles;
     var currentUserRoles = ViewBag.currentUserRoles;
 }
 <div class="container mt-5">
@@ -9,9 +8,9 @@
     <table class="table">
         <thead>
             <tr>
-                <th>UserName</th>
+                <th>Username</th>
                 <th>Email</th>
-                <th>Roles</th>
+                <th>Current Roles</th>
             </tr>
         </thead>
         <tbody>
@@ -32,13 +31,13 @@
                     @if ( currentUserRoles.Contains("Admin"))
                     {
                     <td>
-                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modifyRolesModal" data-bs-userId=@user.UserId data-bs-roles=@Json.Serialize(user.Roles.ToArray()) data-bs-userName="@user.UserName">
-                            Modify Roles
-                        </button>
-                        @if (user.Roles.Contains("UnapprovedUser"))
+                        @if (user.Roles.Count == 0)
                         {
                             <a asp-action="ApproveUser" asp-route-id="@user.UserId" asp-route-roles="User" class="btn btn-primary btn-sm">Approve User</a>
                         }
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modifyRolesModal" data-bs-userId=@user.UserId data-bs-roles=@Json.Serialize(user.Roles.ToArray()) data-bs-userName="@user.UserName">
+                            Modify Roles
+                        </button>
                     </td>
                     }
 
@@ -85,22 +84,19 @@
     <script>
         $(document).ready(function () {
             $('#modifyRolesModal').on('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-                var userId = button.getAttribute('data-bs-userId');
-                var userName = button.getAttribute('data-bs-userName');
-                var rolesJson = button.getAttribute('data-bs-roles');
-                var roles = JSON.parse(rolesJson);
-                console.log(userId, 'is the user');
-                console.log(roles, 'are the users roles');
-                console.log(userName, 'is the users username');
-                var modal = $(this);
+                const button = event.relatedTarget;
+                const userId = button.getAttribute('data-bs-userId');
+                const userName = button.getAttribute('data-bs-userName');
+                const rolesJson = button.getAttribute('data-bs-roles');
+                const roles = JSON.parse(rolesJson);
+                
+                const modal = $(this);
                 modal.find('.modal-title').text('Modify roles for ' + userName);
                 modal.find('#roles').val(rolesJson);
                 modal.find('#user-id-input').val(userId);
-                console.log($('#user-id-input').val());
-                console.log($('#roles').val());
+                
                 modal.find('.role-input').each(function () {
-                    var role = $(this).val();
+                    const role = $(this).val();
                     if (roles.includes(role)) {
                         $(this).prop("checked",true);
                     }
@@ -108,7 +104,7 @@
             })
             $('.role-input').change(
                 function () {
-                    let role = $(this).val();
+                    const role = $(this).val();
                     if ($(this).is(':checked')) {
                         updateRoles(role);
                     } else {
@@ -120,26 +116,22 @@
                 let rolesArray;
                 try {
                     rolesArray = JSON.parse($('#roles').val());
-                    console.log(rolesArray, 'is roles')
                 } catch (e) {
                     rolesArray = [];
                 }
                 rolesArray.push(newRole);
                 $('#roles').val(JSON.stringify(rolesArray));
-                console.log("Roles Updated: ", $('#roles').val());
             }
 
             function deleteRole(roleToDelete) {
                 let rolesArray;
                 try {
                     rolesArray = JSON.parse($('#roles').val());
-                    console.log(rolesArray, 'is roles')
                 } catch (e) {
                     rolesArray = [];
                 }
                 const roles = rolesArray.filter((role) => role !== roleToDelete);
                 $('#roles').val(JSON.stringify(roles));
-                console.log("Roles Updated: ", $('#roles').val());
             }
         });
     </script>
