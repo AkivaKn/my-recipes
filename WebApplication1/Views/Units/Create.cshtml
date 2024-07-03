@@ -43,8 +43,8 @@
 <script>
     $(document).ready(function () {
             $('#unitForm').submit(function (e) {
-                var spellingsString = $('#alternative-spellings-input').val();
-                var spellings = spellingsString.split(',');
+                const spellingsString = $('#alternative-spellings-input').val();
+                const spellings = spellingsString.split(',');
                 $('#alternative-spellings-input').val(JSON.stringify(spellings));
             });
         });
