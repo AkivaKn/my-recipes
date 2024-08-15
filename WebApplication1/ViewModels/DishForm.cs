@@ -1,4 +1,5 @@
-﻿using MyRecipes.Models;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using MyRecipes.Models;
 using System.ComponentModel;
 
 namespace MyRecipes.ViewModels
@@ -14,14 +15,16 @@ namespace MyRecipes.ViewModels
         public string? CategoriesJson { get; set; }
         public string? InstructionsJson { get; set; }
         public string? RecipesJson { get; set; }
-
+        [ValidateNever]
         public List<DishCategory>? Categories =>
             string.IsNullOrEmpty(CategoriesJson) ? new List<DishCategory>() :
             Newtonsoft.Json.JsonConvert.DeserializeObject<List<DishCategory>>(CategoriesJson);
+        [ValidateNever]
 
         public List<Instruction>? Instructions =>
             string.IsNullOrEmpty(InstructionsJson) ? new List<Instruction>() :
             Newtonsoft.Json.JsonConvert.DeserializeObject<List<Instruction>>(InstructionsJson);
+        [ValidateNever]
 
         public List<Recipe>? Recipes =>
             string.IsNullOrEmpty(RecipesJson) ? new List<Recipe>() :

@@ -42,4 +42,6 @@ User can add recipes to collection
 User can print a recipe
 Management can have a dropdown with links to relevant pages
 Users are directed to dishes list as home page
+Users can delete their account and their recipes will be kept annonymously
+
 

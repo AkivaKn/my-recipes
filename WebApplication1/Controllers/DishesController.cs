@@ -67,13 +67,14 @@ namespace MyRecipes.Controllers
         {
             if (!ModelState.IsValid)
             {
+                Console.WriteLine(ModelState);
                 var units = await _context.Units.ToListAsync();
                 ViewBag.Units = units;
                 var categories = await _context.Categories.ToListAsync();
                 ViewBag.Categories = categories;
                 return View(dishForm);
             }
-           
+
             var currentUserId = _userManager.GetUserId(HttpContext.User);
             Console.WriteLine($"{currentUserId} is the current users id");
             
