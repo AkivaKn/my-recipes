@@ -43,7 +43,6 @@
                             </ul>
                         </div>
                         <input type="hidden" id="categories" asp-for="CategoriesJson" class="form-control" />
-                    <div class="col-md-6">
                         <div class="form-group" id="recipe-list">
                             <label>Sections:</label>
                             <ul id="recipes-list"></ul>
@@ -53,12 +52,14 @@
                                 <ul class="ingredients-list"></ul>
                                 <label for="new-ingredients">Ingredients</label>
                                 <textarea id="new-ingredients" name="new-ingredients" class="form-control" placeholder="Enter one or multiple ingredients and press Enter"></textarea>
-                                <button type="button" id="add-ingredients" class="btn btn-primary">Add Ingredients</button>
                             </div>
                             <input type="hidden" id="recipes" asp-for="RecipesJson" />
+                            <div class="container d-flex justify-content-around my-2">
+
+                                <button type="button" id="add-ingredients" class="btn btn-primary">Add Ingredients</button>
                             <button type="button" id="add-recipe" class="btn btn-primary">Add Section</button>
+                            </div>
                         </div>
-                    </div>
                     </div>
                     </div>
                     <div class="col-md-6">
@@ -66,7 +67,7 @@
                             <label>Instructions:</label>
                             <ul id="instruction-ul"></ul>
                             <textarea id="new-instructions" name="new-instructions" class="form-control" placeholder="Enter one or multiple instructions and press Enter"></textarea>
-                            <button type="button" id="add-instructions" class="btn btn-primary">Add Instructions</button>
+                            <button type="button" id="add-instructions" class="btn btn-primary my-2">Add Instructions</button>
                             <input type="hidden" id="Instructions" asp-for="InstructionsJson" />
                         </div>
                 <div class="form-group">
@@ -75,8 +76,10 @@
                 </div>
                     </div>
                 </div>
+                <div class="row d-flex justify-content-center">
+                <button type="submit" class="btn btn-success btn-lg w-50">Create Dish</button>
 
-                <button type="submit" class="btn btn-success">Create Dish</button>
+                    </div>
             </form>
 
         </div>
